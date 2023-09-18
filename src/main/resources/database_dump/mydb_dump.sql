@@ -5,9 +5,7 @@ USE `mydb`;
 -- Table structure for table `category`
 --
 
-DROP TABLE IF EXISTS `category`;
-
-CREATE TABLE `category` (
+CREATE TABLE IF NOT EXISTS `category` (
   `category_id` int NOT NULL AUTO_INCREMENT,
   `description` varchar(45) NOT NULL,
   `color` varchar(45) NOT NULL,
@@ -20,9 +18,7 @@ CREATE TABLE `category` (
 -- Table structure for table `currency`
 --
 
-DROP TABLE IF EXISTS `currency`;
-
-CREATE TABLE `currency` (
+CREATE TABLE IF NOT EXISTS `currency` (
   `currency_id` int NOT NULL AUTO_INCREMENT,
   `code` varchar(3) NOT NULL,
   PRIMARY KEY (`currency_id`),
@@ -34,9 +30,7 @@ CREATE TABLE `currency` (
 -- Table structure for table `users`
 --
 
-DROP TABLE IF EXISTS `users`;
-
-CREATE TABLE `users` (
+CREATE TABLE IF NOT EXISTS `users` (
   `user_id` int NOT NULL AUTO_INCREMENT,
   `name` varchar(45) NOT NULL,
   `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -49,9 +43,7 @@ CREATE TABLE `users` (
 -- Table structure for table `expenses`
 --
 
-DROP TABLE IF EXISTS `expenses`;
-
-CREATE TABLE `expenses` (
+CREATE TABLE IF NOT EXISTS `expenses` (
   `expense_id` int NOT NULL AUTO_INCREMENT,
   `description` varchar(45) DEFAULT NULL,
   `amount` decimal(10, 2) NOT NULL,
