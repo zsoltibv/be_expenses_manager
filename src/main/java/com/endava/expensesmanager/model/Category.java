@@ -9,5 +9,6 @@ public class Category {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "category_id")
     private int categoryId;
-    private 
+    private String description;
+
 }
