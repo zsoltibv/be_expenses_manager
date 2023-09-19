@@ -47,6 +47,27 @@ paths:
           schema: 
             type: integer
             format: int64
+        - in: query
+          name: currency
+          schema:
+            type: "string"
+            enum:
+            - "EUR"
+            - "USD"
+            - "RON"
+          description: Optional - The currency to which the expenses should be converted - if not specified, no conversion will happen and the expenses will be returned with their original currency and amounts
+        - in: query
+          name: startDate
+          schema:
+            type: "string"
+            format: date
+          description: Optional - Beginning of date interval from which the expenses are to be returned
+        - in: query
+          name: endDate
+          schema:
+            type: "string"
+            format: date
+          description: Optional - End of date interval from which the expenses are to be returned - if specified, startDate has to be specified as well; if not specified, expenses will be returned up until the current date
       responses:
         '200':
           content:
