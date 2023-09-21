@@ -1,12 +1,18 @@
 package com.endava.expensesmanager.repository;
 
-import com.endava.expensesmanager.model.entity.Expense;
-import com.endava.expensesmanager.service.ExpenseService;
+import com.endava.expensesmanager.model.Expense;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
-public interface ExpenseRepository extends JpaRepository<Expense, Integer> {
+public interface ExpenseRepository extends JpaRepository<Expense,Integer> {
+    @Query("SELECT e FROM Expense e WHERE e.expenseDate BETWEEN :startDate AND :endDate AND e.user.userId = :userId")
+    List<Expense> findExpensesBetweenDatesForUser(
+            @Param("startDate") LocalDateTime startDate,
+            @Param("endDate") LocalDateTime endDate,
+            @Param("userId") int userId
+    );
 }
