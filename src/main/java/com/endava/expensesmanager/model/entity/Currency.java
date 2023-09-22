@@ -1,4 +1,4 @@
-package com.endava.expensesmanager.model;
+package com.endava.expensesmanager.model.entity;
 
 import jakarta.persistence.*;
 

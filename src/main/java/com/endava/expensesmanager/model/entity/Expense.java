@@ -1,9 +1,9 @@
-package com.endava.expensesmanager.model;
+package com.endava.expensesmanager.model.entity;
 
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "expenses")
@@ -17,7 +17,7 @@ public class Expense {
     @Column(name = "amount",precision = 10,scale = 2)
     private BigDecimal amount;
     @Column(name = "expense_date")
-    private LocalDateTime expenseDate;
+    private LocalDate expenseDate;
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
@@ -44,11 +44,11 @@ public class Expense {
         this.amount = amount;
     }
 
-    public LocalDateTime getExpenseDate() {
+    public LocalDate getExpenseDate() {
         return expenseDate;
     }
 
-    public void setExpenseDate(LocalDateTime expenseDate) {
+    public void setExpenseDate(LocalDate expenseDate) {
         this.expenseDate = expenseDate;
     }
 

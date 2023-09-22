@@ -1,6 +1,6 @@
 package com.endava.expensesmanager.service;
 
-import com.endava.expensesmanager.model.Category;
+import com.endava.expensesmanager.model.entity.Category;
 
 import java.util.List;
 
