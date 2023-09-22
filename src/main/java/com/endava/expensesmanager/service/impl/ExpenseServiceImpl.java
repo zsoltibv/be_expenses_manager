@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Stream;
-import java.time.LocalDateTime;
 
 @Service
 public class ExpenseServiceImpl implements ExpenseService {
@@ -49,8 +48,8 @@ public class ExpenseServiceImpl implements ExpenseService {
 
     }
 
-    @Override
-    public List<Expense> getExpensesByBeginDateAndEndDate(LocalDateTime beginDate, LocalDateTime endDate,Integer userId) {
-        return  expenseRepository.findExpensesBetweenDatesForUser(beginDate,endDate,userId);
+
+    public List<Expense> getExpensesByBeginDateAndEndDate(LocalDate beginDate, LocalDate endDate, Integer userId) {
+       return  expenseRepository.findExpensesBetweenDatesForUser(beginDate,endDate,userId);
     }
 }
