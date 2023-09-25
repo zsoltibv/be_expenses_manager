@@ -1,9 +1,13 @@
 package com.endava.expensesmanager.model.entity;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
 @Entity
+@Getter
+@Setter
 @Table(name = "users")
 public class User {
     @Id
@@ -13,25 +17,4 @@ public class User {
     private String name;
     @Column(name = "created_at")
     private LocalDateTime createdAt;
-
-    public Integer getId() {
-        return userId;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
 }

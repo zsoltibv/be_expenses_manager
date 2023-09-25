@@ -1,0 +1,31 @@
+package com.endava.expensesmanager.model.mapper;
+
+import com.endava.expensesmanager.model.dto.ExpenseDto;
+import com.endava.expensesmanager.model.entity.Category;
+import com.endava.expensesmanager.model.entity.Currency;
+import com.endava.expensesmanager.model.entity.Expense;
+import com.endava.expensesmanager.model.entity.User;
+
+public class ExpenseMapper {
+    public static Expense toExpense(ExpenseDto expenseDto)
+    {
+        Expense expense = new Expense();
+        expense.setDescription(expenseDto.getDescription());
+        expense.setExpenseDate(expenseDto.getExpenseDate());
+        expense.setAmount(expenseDto.getAmount());
+
+        User user = new User();
+        user.setUserId(expenseDto.getUserId());
+        expense.setUser(user);
+
+        Category category = new Category();
+        category.setCategoryId(expenseDto.getCategoryId());
+        expense.setCategory(category);
+
+        Currency currency = new Currency();
+        currency.setCurrencyId(expenseDto.getCurrencyId());
+        expense.setCurrency(currency);
+
+        return expense;
+    }
+}
