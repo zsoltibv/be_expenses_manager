@@ -19,8 +19,8 @@ public class CategoryController {
     }
 
     @GetMapping()
-    public ResponseEntity<Optional<List<Category>>> getAllCategories() {
-        Optional<List<Category>> categories = categoryService.getAllCategories();
+    public ResponseEntity<List<Category>> getAllCategories() {
+        List<Category> categories = categoryService.getAllCategories();
         return new ResponseEntity<>(categories, HttpStatus.OK);
     }
 }

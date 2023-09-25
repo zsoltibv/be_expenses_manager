@@ -17,7 +17,7 @@ public class CategoryServiceImpl implements CategoryService {
         this.categoryRepository = categoryRepository;
     }
     @Override
-    public Optional<List<Category>> getAllCategories() {
-        return Optional.of(categoryRepository.findAll());
+    public List<Category> getAllCategories() {
+        return categoryRepository.findAll();
     }
 }

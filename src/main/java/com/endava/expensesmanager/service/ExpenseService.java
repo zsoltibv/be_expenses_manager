@@ -6,5 +6,5 @@ import com.endava.expensesmanager.model.entity.Expense;
 import java.util.Optional;
 
 public interface ExpenseService {
-        Optional<Expense> addExpense(ExpenseDto expense);
+        Expense addExpense(ExpenseDto expense);
 }

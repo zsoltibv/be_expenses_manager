@@ -18,9 +18,7 @@ public class ExpenseServiceImpl implements ExpenseService {
     }
 
     @Override
-    public Optional<Expense> addExpense(ExpenseDto expense) {
-        return Optional.of(expenseRepository.save(
-                ExpenseMapper.toExpense(expense)
-        ));
+    public Expense addExpense(ExpenseDto expense) {
+        return expenseRepository.save(ExpenseMapper.toExpense(expense));
     }
 }

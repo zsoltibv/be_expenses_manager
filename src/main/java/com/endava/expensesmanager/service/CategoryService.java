@@ -6,5 +6,5 @@ import java.util.List;
 import java.util.Optional;
 
 public interface CategoryService {
-    Optional<List<Category>> getAllCategories();
+    List<Category> getAllCategories();
 }
