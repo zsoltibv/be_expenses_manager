@@ -12,6 +12,8 @@ tags:
   description: "Manage categories"
 - name: "currency"
   description: "Manage currencies"
+- name: "total"
+  description: "Manage totals"
 paths:
   /expense:
     post:
@@ -179,6 +181,102 @@ paths:
            application/json:
              schema:
               $ref: '#/components/schemas/Currencies'
+          description: "Ok"
+  /total:
+    get:
+      tags:
+      - "total"
+      summary: "Get total sum of expenses amounts"
+      description: "Return total sum of expenses for the given user id, in the given [startDate, endDate] interval"
+      operationId: "getTotal"
+      parameters:
+        - in: query
+          name: "userId"
+          description: "Id of current user"
+          required: true
+          schema: 
+            type: integer
+            format: int64
+        - in: query
+          name: currency
+          schema:
+            type: "string"
+            enum:
+            - "EUR"
+            - "USD"
+            - "RON"
+          description: Optional - The currency to which the expenses should be converted - if not specified, no conversion will happen and the expenses will be returned with their original currency and amounts
+        - in: query
+          name: startDate
+          schema:
+            type: "string"
+            format: date
+          description: Optional - Beginning of date interval from which the expenses are to be returned
+        - in: query
+          name: endDate
+          schema:
+            type: "string"
+            format: date
+          description: Optional - End of date interval from which the expenses are to be returned - if specified, startDate has to be specified as well; if not specified, expenses will be returned up until the current date
+      responses:
+        '200':
+          content:
+           application/json:
+             schema:
+              type: integer
+          description: "Ok"
+  /total/category:
+    get:
+      tags:
+      - "total"
+      summary: "Get total sum of expenses amounts"
+      description: "Return total sum of expenses for the given user id, in the given [startDate, endDate] interval"
+      operationId: "getTotalPerCategory"
+      parameters:
+        - in: query
+          name: "userId"
+          description: "Id of current user"
+          required: true
+          schema: 
+            type: integer
+            format: int64
+        - in: query
+          name: currency
+          schema:
+            type: "string"
+            enum:
+            - "EUR"
+            - "USD"
+            - "RON"
+          description: Optional - The currency to which the expenses should be converted - if not specified, no conversion will happen and the expenses will be returned with their original currency and amounts
+        - in: query
+          name: startDate
+          schema:
+            type: "string"
+            format: date
+          description: Optional - Beginning of date interval from which the expenses are to be returned
+        - in: query
+          name: endDate
+          schema:
+            type: "string"
+            format: date
+          description: Optional - End of date interval from which the expenses are to be returned - if specified, startDate has to be specified as well; if not specified, expenses will be returned up until the current date
+      responses:
+        '200':
+          content:
+           application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: "number"
+                  format: "double"
+              example:
+                HOUSING: 125.0
+                TRANSPORT: 75.5
+                HEALTH: 299.99
+                FOOD: 70
+                ENTERTAINMENT: 0
+                MISCELLANEOUS: 100.75
           description: "Ok"
 components:
   schemas:
