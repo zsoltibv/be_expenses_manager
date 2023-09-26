@@ -7,7 +7,8 @@ import com.endava.expensesmanager.repository.ExpenseRepository;
 import com.endava.expensesmanager.service.ExpenseService;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
+import java.util.List;
+
 
 @Service
 public class ExpenseServiceImpl implements ExpenseService {
@@ -20,5 +21,14 @@ public class ExpenseServiceImpl implements ExpenseService {
     @Override
     public Expense addExpense(ExpenseDto expense) {
         return expenseRepository.save(ExpenseMapper.toExpense(expense));
+    }
+
+    @Override
+    public List<ExpenseDto> getExpensesByUserId(Integer userId){
+
+        return ExpenseMapper.toDtoList(expenseRepository.findAll().stream()
+                .filter(expense -> expense.getUser().getUserId() == userId)
+                .toList());
+
     }
 }
