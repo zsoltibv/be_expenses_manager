@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -27,9 +28,10 @@ public class ExpenseController {
         return new ResponseEntity<>(expenseDto, HttpStatus.CREATED);
     }
 
-    @GetMapping()
-    public ResponseEntity<List<ExpenseDto>> getExpensesByUserId(@RequestParam Integer userId){
-        List<ExpenseDto> expenses = expenseService.getExpensesByUserId(userId);
+    @GetMapping("byUser/{userId}")
+    public ResponseEntity<List<ExpenseDto>> getExpensesByUserId(@PathVariable Integer userId, @RequestParam(required = false) LocalDateTime startDate, @RequestParam(required = false) LocalDateTime endDate){
+
+        List<ExpenseDto> expenses = expenseService.getExpensesByUserId(userId, startDate, endDate);
         return new ResponseEntity<>(expenses, HttpStatus.OK);
     }
 }
