@@ -50,15 +50,6 @@ paths:
             type: integer
             format: int64
         - in: query
-          name: currency
-          schema:
-            type: "string"
-            enum:
-            - "EUR"
-            - "USD"
-            - "RON"
-          description: Optional - The currency to which the expenses should be converted - if not specified, no conversion will happen and the expenses will be returned with their original currency and amounts
-        - in: query
           name: startDate
           schema:
             type: "string"
