@@ -33,6 +33,7 @@ public class ExpenseMapper {
     public static ExpenseDto toDto(Expense expense)
     {
         ExpenseDto expenseDto = new ExpenseDto();
+        expenseDto.setExpenseId(expense.getExpenseId());
         expenseDto.setDescription(expense.getDescription());
         expenseDto.setExpenseDate(expense.getExpenseDate());
         expenseDto.setAmount(expense.getAmount());
@@ -41,11 +42,5 @@ public class ExpenseMapper {
         expenseDto.setCurrencyId(expense.getCurrency().getCurrencyId());
 
         return expenseDto;
-    }
-    public static List<ExpenseDto> toDtoList(List<Expense> expenses)
-    {
-        return expenses.stream()
-                .map(ExpenseMapper::toDto)
-                .toList();
     }
 }

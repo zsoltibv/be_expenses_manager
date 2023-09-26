@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 
 @Data
 public class ExpenseDto {
+    private Integer expenseId;
     @NotBlank(message = "Description is required")
     @Size(max = 45, message = "Description must be less than or equal to 45 characters")
     private String description;
