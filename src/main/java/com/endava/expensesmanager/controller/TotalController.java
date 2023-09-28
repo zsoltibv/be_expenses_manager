@@ -2,7 +2,7 @@ package com.endava.expensesmanager.controller;
 
 import com.endava.expensesmanager.model.entity.Category;
 import com.endava.expensesmanager.model.entity.Expense;
-import com.endava.expensesmanager.service.impl.CategoryLogicImpl;
+import com.endava.expensesmanager.service.CurrencyService;
 import com.endava.expensesmanager.service.ExpenseService;
 import com.endava.expensesmanager.service.impl.CategoryServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,21 +27,21 @@ public class TotalController {
     {
         this.expenseService=expenseService;
     }
-    private CategoryLogicImpl categoryLogic;
-    @Autowired
-    public void setCategoryLogic(CategoryLogicImpl categoryLogic)
-    {
-        this.categoryLogic=categoryLogic;
-    }
+    private CurrencyService currencyService;
+@Autowired
+public void setCurrencyService(CurrencyService currencyService)
+{
+    this.currencyService=currencyService;
+}
 
     @Autowired
     CategoryServiceImpl categoryService;
     @GetMapping
-    public ResponseEntity<?> getTotalSum(@RequestParam int userId, @RequestParam LocalDate startDate, @RequestParam LocalDate endDate)
+    public ResponseEntity<?> getTotalSum(@RequestParam int userId, @RequestParam LocalDate startDate, @RequestParam LocalDate endDate,@RequestParam String code)
     {
-        List<Expense> expenses=expenseService.getExpensesByBeginDateAndEndDate(startDate,endDate,userId);
+        List<Expense> expenses=currencyService.changeCurrencyTo(code,expenseService.getExpensesByDates(startDate,endDate,userId));
         BigDecimal sum=BigDecimal.ZERO;
-        for(int i=0;i<=expenses.size();i++)
+        for(int i=0;i<expenses.size();i++)
         {
             sum=sum.add(expenses.get(i).getAmount());
         }
@@ -49,20 +49,25 @@ public class TotalController {
     }
 
     @GetMapping("/category")
-    public ResponseEntity<?> getTotalSumCategory(@RequestParam int userId, @RequestParam LocalDate startDate, @RequestParam LocalDate endDate)
+    public ResponseEntity<?> getTotalSumCategory(@RequestParam int userId, @RequestParam LocalDate startDate, @RequestParam LocalDate endDate,@RequestParam String code)
     {
         if(endDate.isAfter(LocalDate.now()))
             return new ResponseEntity<>("The end date is invalid",HttpStatus.BAD_REQUEST);
 
-        List<Expense> expenses=categoryLogic.getExpensesList(startDate,endDate,userId);
+        List<Expense> expenses=currencyService.changeCurrencyTo(code,expenseService.getExpensesByDates(startDate,endDate,userId));
         List<Category> categories=categoryService.getAllCategories();
-        Map<Integer, BigDecimal> resultMap = categoryLogic.sortExpenses(expenses,categories);
+        Map<String, BigDecimal> resultMap = expenseService.sortExpenses(expenses);
 
           return new ResponseEntity<>(resultMap,HttpStatus.OK);
 
     }
+    @GetMapping("/currencies")
+   public ResponseEntity<?> getCurrencies()
+   {
+       return new ResponseEntity<>(currencyService.getCurrencies(),HttpStatus.OK);
+   }
+
 
 }
-//MODIFY USER
-// ADD NEW QUERY without START END AND END DATE
+
 

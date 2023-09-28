@@ -1,13 +1,21 @@
 package com.endava.expensesmanager.service.impl;
 
 import com.endava.expensesmanager.model.dto.ExpenseDto;
+import com.endava.expensesmanager.model.dto.ExchangeRatesDto;
+import com.endava.expensesmanager.model.entity.Category;
 import com.endava.expensesmanager.model.entity.Expense;
 import com.endava.expensesmanager.model.mapper.ExpenseMapper;
 import com.endava.expensesmanager.repository.ExpenseRepository;
 import com.endava.expensesmanager.service.ExpenseService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Service
@@ -17,6 +25,7 @@ public class ExpenseServiceImpl implements ExpenseService {
     public ExpenseServiceImpl(ExpenseRepository expenseRepository) {
         this.expenseRepository = expenseRepository;
     }
+
 
     @Override
     public Expense addExpense(ExpenseDto expense) {
@@ -48,8 +57,22 @@ public class ExpenseServiceImpl implements ExpenseService {
 
     }
 
-
     public List<Expense> getExpensesByBeginDateAndEndDate(LocalDate beginDate, LocalDate endDate, Integer userId) {
-       return  expenseRepository.findExpensesBetweenDatesForUser(beginDate,endDate,userId);
+        return expenseRepository.findExpensesBetweenDatesForUser(beginDate, endDate, userId);
+    }
+
+    @Override
+    public List<Expense> getExpensesByDates(LocalDate beginDate, LocalDate endDate, Integer userId) {
+        if (beginDate == null)
+            return this.getExpensesByUserId(userId);
+        else return this.getExpensesByBeginDateAndEndDate(beginDate, endDate, userId);
+    }
+
+    public Map<String, BigDecimal> sortExpenses(List<Expense> expenses) {
+        return expenses.stream()
+                .collect(Collectors.groupingBy(
+                        expense -> expense.getCategory().getDescription(),
+                        Collectors.mapping(Expense::getAmount, Collectors.reducing(BigDecimal.ZERO, BigDecimal::add))
+                ));
     }
 }
