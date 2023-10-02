@@ -1,14 +1,14 @@
-package com.endava.expensesmanager.exception;
+package com.endava.expensesmanager.exception.handler;
 
+import com.endava.expensesmanager.exception.NotFoundException;
+import com.endava.expensesmanager.exception.response.ApiError;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.ServletWebRequest;
-import org.springframework.web.context.request.WebRequest;
 
-import java.sql.SQLIntegrityConstraintViolationException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -17,8 +17,8 @@ import java.util.Map;
 public class ApiExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ApiError> handleInvalidArgument(MethodArgumentNotValidException e,
-                                                          ServletWebRequest request) {
+    public ResponseEntity<ApiError> handleInvalidArgumentException(MethodArgumentNotValidException e,
+                                                                   ServletWebRequest request) {
         Map<String, String> errorMap = new HashMap<>();
 
         e.getBindingResult().getFieldErrors().forEach(error -> {
@@ -34,19 +34,20 @@ public class ApiExceptionHandler {
         return new ResponseEntity<>(apiError, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(SQLIntegrityConstraintViolationException.class)
-    public ResponseEntity<ApiError> handleIntegrityConstraintViolation(SQLIntegrityConstraintViolationException e,
-                                                                       ServletWebRequest request) {
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<ApiError> handleNotFoundException(NotFoundException e,
+                                                            ServletWebRequest request) {
         Map<String, String> errorMap = new HashMap<>();
-        errorMap.put("foreign key", "foreign key reference doesn't exist");
+        errorMap.put(e.getField(), e.getMessage());
 
         ApiError apiError = new ApiError(
                 request.getRequest().getRequestURI(),
                 errorMap,
-                HttpStatus.FORBIDDEN.value(),
+                HttpStatus.NOT_FOUND.value(),
                 LocalDateTime.now()
         );
-        return new ResponseEntity<>(apiError, HttpStatus.FORBIDDEN);
+
+        return new ResponseEntity<>(apiError, HttpStatus.NOT_FOUND);
     }
 }
 
