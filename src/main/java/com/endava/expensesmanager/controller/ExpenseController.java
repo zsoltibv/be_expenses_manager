@@ -33,4 +33,10 @@ public class ExpenseController {
         List<ExpenseDto> expenses = expenseService.getExpensesByUserId(userId, startDate, endDate);
         return new ResponseEntity<>(expenses, HttpStatus.OK);
     }
+    @DeleteMapping("/delete")
+    public ResponseEntity<?> deleteExpenseById(@RequestParam Integer expenseId)
+    {
+        expenseService.deleteExpenseById(expenseId);
+        return new ResponseEntity<>("The expense has been deleted",HttpStatus.OK);
+    }
 }

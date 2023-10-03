@@ -10,4 +10,5 @@ import java.util.List;
 public interface ExpenseService {
         Expense addExpense(ExpenseDto expense);
         List<ExpenseDto> getExpensesByUserId(Integer userId, LocalDate startDate, LocalDate endDate);
+        void deleteExpenseById(Integer expenseId);
 }
