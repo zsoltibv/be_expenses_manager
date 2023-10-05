@@ -11,7 +11,7 @@ import java.util.List;
 
 
 public interface ExpenseService {
-        void addExpense(ExpenseDto expenseDto) throws ExpenseNotFoundException, CategoryNotFoundException, CurrencyNotFoundException;
-        void editExpense(Integer expenseId, ExpenseDto expenseDto) throws ExpenseNotFoundException, UserNotFoundException, CategoryNotFoundException, CurrencyNotFoundException;
+        void addExpense(ExpenseDto expenseDto) throws RuntimeException;
+        void editExpense(Integer expenseId, ExpenseDto expenseDto) throws RuntimeException;
         List<ExpenseDto> getExpensesByUserId(Integer userId, LocalDate startDate, LocalDate endDate);
 }

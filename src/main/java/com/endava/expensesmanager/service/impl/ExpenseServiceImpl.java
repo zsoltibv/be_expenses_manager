@@ -37,7 +37,7 @@ public class ExpenseServiceImpl implements ExpenseService {
     }
 
     @Override
-    public void addExpense(ExpenseDto expenseDto) throws UserNotFoundException, CategoryNotFoundException, CurrencyNotFoundException {
+    public void addExpense(ExpenseDto expenseDto) throws RuntimeException {
         if (!userRepository.existsById(expenseDto.getUserId())) {
             throw new UserNotFoundException(expenseDto.getUserId());
         }
@@ -54,7 +54,7 @@ public class ExpenseServiceImpl implements ExpenseService {
     }
 
     @Override
-    public void editExpense(Integer expenseId, ExpenseDto expenseDto) throws ExpenseNotFoundException, UserNotFoundException, CategoryNotFoundException, CurrencyNotFoundException {
+    public void editExpense(Integer expenseId, ExpenseDto expenseDto) throws RuntimeException {
         Expense existingExpense = expenseRepository.findById(expenseId)
                 .orElseThrow(() -> new ExpenseNotFoundException(expenseId));
 
