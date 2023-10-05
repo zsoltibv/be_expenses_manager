@@ -5,10 +5,13 @@ import com.endava.expensesmanager.model.entity.Expense;
 import com.endava.expensesmanager.model.mapper.ExpenseMapper;
 import com.endava.expensesmanager.repository.ExpenseRepository;
 import com.endava.expensesmanager.service.ExpenseService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 
@@ -51,7 +54,14 @@ public class ExpenseServiceImpl implements ExpenseService {
     }
 
     @Override
-    public void deleteExpenseById(Integer expenseId) {
-        expenseRepository.deleteById(expenseId);
+    public ResponseEntity<?> deleteExpenseById(Integer expenseId) {
+        Optional<Expense> expenseOptional=expenseRepository.findById(expenseId);
+        if(expenseOptional.isPresent())
+        {
+            expenseRepository.deleteById(expenseId);
+            return new ResponseEntity<>("The expense Has been deleted", HttpStatus.OK);
+        }
+        return new ResponseEntity<>("The expense does not exist",HttpStatus.NOT_FOUND);
+
     }
 }

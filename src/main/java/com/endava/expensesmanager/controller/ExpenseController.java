@@ -36,7 +36,6 @@ public class ExpenseController {
     @DeleteMapping("/delete")
     public ResponseEntity<?> deleteExpenseById(@RequestParam Integer expenseId)
     {
-        expenseService.deleteExpenseById(expenseId);
-        return new ResponseEntity<>("The expense has been deleted",HttpStatus.OK);
+        return expenseService.deleteExpenseById(expenseId);
     }
 }
