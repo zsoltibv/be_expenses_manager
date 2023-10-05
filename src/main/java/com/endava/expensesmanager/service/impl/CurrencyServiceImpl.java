@@ -1,7 +1,9 @@
 package com.endava.expensesmanager.service.impl;
 
 import com.endava.expensesmanager.model.dto.ExchangeRatesDto;
+import com.endava.expensesmanager.model.entity.Currency;
 import com.endava.expensesmanager.model.entity.Expense;
+import com.endava.expensesmanager.repository.CurrencyRepository;
 import com.endava.expensesmanager.service.CurrencyService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -10,13 +12,16 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 import java.util.List;
-import java.util.Objects;
+
 
 @Service
 public class CurrencyServiceImpl implements CurrencyService {
+    private CurrencyRepository currencyRepository;
+    public CurrencyServiceImpl(CurrencyRepository currencyRepository)
+    { this.currencyRepository=currencyRepository;}
+
 
 @Value("${exchange-rates-api-enable}")
     private boolean flag;
@@ -73,8 +78,11 @@ private String apiKey;
         }
         return newExpenseList;
     }
-    public List<String> getCurrencies()
-    {
-        return currencies;
+
+    @Override
+    public List<Currency> getCurrencies() {
+        return currencyRepository.findAll();
     }
+
+
 }
