@@ -1,6 +1,9 @@
 package com.endava.expensesmanager.service.impl;
 
-import com.endava.expensesmanager.exception.NotFoundException;
+import com.endava.expensesmanager.exception.CategoryNotFoundException;
+import com.endava.expensesmanager.exception.CurrencyNotFoundException;
+import com.endava.expensesmanager.exception.ExpenseNotFoundException;
+import com.endava.expensesmanager.exception.UserNotFoundException;
 import com.endava.expensesmanager.model.dto.ExpenseDto;
 import com.endava.expensesmanager.model.entity.Category;
 import com.endava.expensesmanager.model.entity.Currency;
@@ -12,13 +15,10 @@ import com.endava.expensesmanager.repository.CurrencyRepository;
 import com.endava.expensesmanager.repository.ExpenseRepository;
 import com.endava.expensesmanager.repository.UserRepository;
 import com.endava.expensesmanager.service.ExpenseService;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Stream;
 
 
@@ -37,44 +37,39 @@ public class ExpenseServiceImpl implements ExpenseService {
     }
 
     @Override
-    public void addExpense(ExpenseDto expenseDto) throws NotFoundException {
+    public void addExpense(ExpenseDto expenseDto) throws UserNotFoundException, CategoryNotFoundException, CurrencyNotFoundException {
         if (!userRepository.existsById(expenseDto.getUserId())) {
-            throw new NotFoundException("userId", "User with ID " + expenseDto.getUserId() + " not found");
-        } else if (!categoryRepository.existsById(expenseDto.getCategoryId())) {
-            throw new NotFoundException("categoryId", "Category with ID " + expenseDto.getCategoryId() + " not found");
-        } else if (!currencyRepository.existsById(expenseDto.getCurrencyId())) {
-            throw new NotFoundException("currencyId", "Currency with ID " + expenseDto.getCurrencyId() + " not found");
+            throw new UserNotFoundException(expenseDto.getUserId());
+        }
+
+        if (!categoryRepository.existsById(expenseDto.getCategoryId())) {
+            throw new CategoryNotFoundException(expenseDto.getCategoryId());
+        }
+
+        if (!currencyRepository.existsById(expenseDto.getCurrencyId())) {
+            throw new CurrencyNotFoundException(expenseDto.getCurrencyId());
         }
 
         expenseRepository.save(ExpenseMapper.toExpense(expenseDto));
     }
 
     @Override
-    public void editExpense(Integer expenseId, ExpenseDto expenseDto) throws NotFoundException {
-        Optional<Expense> existingExpense = expenseRepository.findById(expenseId);
+    public void editExpense(Integer expenseId, ExpenseDto expenseDto) throws ExpenseNotFoundException, UserNotFoundException, CategoryNotFoundException, CurrencyNotFoundException {
+        Expense existingExpense = expenseRepository.findById(expenseId)
+                .orElseThrow(() -> new ExpenseNotFoundException(expenseId));
 
-        if (existingExpense.isPresent()) {
-            Expense existingExpenseEntity = existingExpense.get();
-            existingExpenseEntity.setDescription(expenseDto.getDescription());
-            existingExpenseEntity.setAmount(expenseDto.getAmount());
-            existingExpenseEntity.setExpenseDate(expenseDto.getExpenseDate());
+        User user = userRepository.findById(expenseDto.getUserId())
+                .orElseThrow(() -> new UserNotFoundException(expenseDto.getUserId()));
 
-            User user = userRepository.findById(expenseDto.getUserId())
-                    .orElseThrow(() -> new NotFoundException("userId", "User with ID " + expenseDto.getUserId() + " not found"));
-            existingExpenseEntity.setUser(user);
+        Category category = categoryRepository.findById(expenseDto.getCategoryId())
+                .orElseThrow(() -> new CategoryNotFoundException(expenseDto.getCategoryId()));
 
-            Category category = categoryRepository.findById(expenseDto.getCategoryId())
-                    .orElseThrow(() -> new NotFoundException("categoryId", "Category with ID " + expenseDto.getCategoryId() + " not found"));
-            existingExpenseEntity.setCategory(category);
+        Currency currency = currencyRepository.findById(expenseDto.getCurrencyId())
+                .orElseThrow(() -> new CurrencyNotFoundException(expenseDto.getCurrencyId()));
 
-            Currency currency = currencyRepository.findById(expenseDto.getCurrencyId())
-                    .orElseThrow(() -> new NotFoundException("currencyId", "Currency with ID " + expenseDto.getCurrencyId() + " not found"));
-            existingExpenseEntity.setCurrency(currency);
+        Expense updatedExpense = ExpenseMapper.toUpdatedExpense(existingExpense, expenseDto, user, category, currency);
 
-            expenseRepository.save(existingExpenseEntity);
-        } else {
-            throw new NotFoundException("expenseId", "Expense with ID " + expenseId + " not found.");
-        }
+        expenseRepository.save(updatedExpense);
     }
 
     @Override

@@ -1,12 +1,7 @@
 package com.endava.expensesmanager.exception;
 
-import lombok.Getter;
-
-@Getter
-public class NotFoundException extends Exception {
-    private final String field;
-    public NotFoundException(String field, String message) {
-        super(message);
-        this.field = field;
+public class ExpenseNotFoundException extends RuntimeException {
+    public ExpenseNotFoundException(Integer expenseId) {
+        super("Expense with ID " + expenseId + " not found.");
     }
 }
