@@ -38,13 +38,18 @@ private String apiKey;
                 .bodyToMono(ExchangeRatesDto.class)
                 .block();
         List<String> knownCurrencies = List.of("EUR", "RON", "USD");
-        currencies=knownCurrencies;
+        currencies=new ArrayList<>(knownCurrencies);
         exchangeRatesDto.getConversionRates().entrySet().stream()
                 .filter(e -> knownCurrencies.contains(e.getKey()))
                 .forEach(entry -> exchangeRates.put(entry.getKey(), entry.getValue()));}
         else{
-         exchangeRates.put("EUR",new BigDecimal("5"));
-            exchangeRates.put("USD",new BigDecimal("4.5"));
+            currencies=new ArrayList<>();
+            currencies.add("EUR");
+            currencies.add("USD");
+            currencies.add("RON");
+
+         exchangeRates.put("EUR",new BigDecimal("0.2"));
+            exchangeRates.put("USD",new BigDecimal("0.22"));
             exchangeRates.put("RON",new BigDecimal("1"));
         }
         System.out.println(exchangeRates);

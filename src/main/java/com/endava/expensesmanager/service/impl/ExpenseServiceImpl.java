@@ -63,9 +63,7 @@ public class ExpenseServiceImpl implements ExpenseService {
 
     @Override
     public List<Expense> getExpensesByDates(LocalDate beginDate, LocalDate endDate, Integer userId) {
-        if (beginDate == null)
-            return this.getExpensesByUserId(userId);
-        else return this.getExpensesByBeginDateAndEndDate(beginDate, endDate, userId);
+        return this.getExpensesByBeginDateAndEndDate(beginDate, endDate, userId);
     }
 
     public Map<String, BigDecimal> sortExpenses(List<Expense> expenses) {
