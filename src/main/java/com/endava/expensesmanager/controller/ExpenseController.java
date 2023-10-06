@@ -5,12 +5,14 @@ import com.endava.expensesmanager.model.entity.Expense;
 import com.endava.expensesmanager.service.CurrencyService;
 import com.endava.expensesmanager.service.ExpenseService;
 import jakarta.validation.Valid;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -68,9 +70,23 @@ public class ExpenseController {
         return new ResponseEntity<>(currencyService.getCurrencies(), HttpStatus.OK);
     }
     @GetMapping("/barchartData")
-    public ResponseEntity<?>getBarchartData(@RequestParam int userId, @RequestParam LocalDate startDate, @RequestParam LocalDate endDate)
+    public ResponseEntity<?>getBarchartData(@RequestParam int userId, @RequestParam LocalDate startDate, @RequestParam LocalDate endDate,@RequestParam String code)
     {  List<List<Expense>> barChartList= expenseService.getExpensesByBeginDateAndEndDateSortedBy(startDate,endDate,userId);
-        return new ResponseEntity<>(barChartList,HttpStatus.OK);
+        List<List<Expense>> currencyBarChartList=new ArrayList<>();
+        List<Map<String,BigDecimal>> barchartListMap=new ArrayList<>();
+        for(int i=0;i< barChartList.size();i++)
+        {List<Expense> listItem=barChartList.get(i);
+            List<Expense> newListItem=currencyService.changeCurrencyTo(code,listItem);
+            currencyBarChartList.add(newListItem);
+        }
+        for(int i=0;i<currencyBarChartList.size();i++)
+        {List<Expense> listItem=currencyBarChartList.get(i);
+            Map<String,BigDecimal> mapItem=expenseService.sortExpenses(listItem);
+            barchartListMap.add(mapItem);
+
+        }
+
+        return new ResponseEntity<>(barchartListMap,HttpStatus.OK);
     }
 
 }

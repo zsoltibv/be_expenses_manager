@@ -90,9 +90,9 @@ public class ExpenseServiceImpl implements ExpenseService {
         }
        else if(beginDate.getYear() == endDate.getYear() && beginDate.getMonth() == endDate.getMonth())
         { LocalDate increment = LocalDate.of(beginDate.getYear(), beginDate.getMonth(), beginDate.getDayOfMonth());
-            while (endDate.compareTo(increment.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY)))>=0) {
+            while (!endDate.isBefore(increment.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY)))) {
                 LocalDate beginDateWeek = increment.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
-                LocalDate endDateWeek = increment.with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY));
+                LocalDate endDateWeek = increment.with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY));
                 if (beginDateWeek.isBefore(beginDate))
                     beginDateWeek = LocalDate.of(beginDate.getYear(), beginDate.getMonth(), beginDate.getDayOfMonth());
                 if (endDateWeek.isAfter(endDate))
