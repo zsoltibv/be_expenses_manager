@@ -47,7 +47,7 @@ public class ExpenseController {
         for (int i = 0; i < expenses.size(); i++) {
             sum = sum.add(expenses.get(i).getAmount());
         }
-        return new ResponseEntity<>(sum, HttpStatus.OK);
+        return new ResponseEntity<>(expenses, HttpStatus.OK);
     }
 
     @GetMapping("/category")
@@ -66,6 +66,11 @@ public class ExpenseController {
     @GetMapping("/currencies")
     public ResponseEntity<?> getCurrencies() {
         return new ResponseEntity<>(currencyService.getCurrencies(), HttpStatus.OK);
+    }
+    @GetMapping("/barchartData")
+    public ResponseEntity<?>getBarchartData(@RequestParam int userId, @RequestParam LocalDate startDate, @RequestParam LocalDate endDate)
+    {  List<List<Expense>> barChartList= expenseService.getExpensesByBeginDateAndEndDateSortedBy(startDate,endDate,userId);
+        return new ResponseEntity<>(barChartList,HttpStatus.OK);
     }
 
 }

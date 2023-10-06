@@ -13,6 +13,7 @@ public interface ExpenseService {
     List<Expense> getExpensesByBeginDateAndEndDate(LocalDate beginDate, LocalDate endDate, Integer userId);
     List<Expense> getExpensesByDates(LocalDate beginDate, LocalDate endDate, Integer userId);
     Map<String, BigDecimal> sortExpenses(List<Expense> expenses);
+    List<List<Expense>> getExpensesByBeginDateAndEndDateSortedBy(LocalDate beginDate, LocalDate endDate, Integer userId);
 
 
 }

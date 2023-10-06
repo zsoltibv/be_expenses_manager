@@ -30,4 +30,5 @@ public class Expense {
     @ManyToOne
     @JoinColumn(name = "currency_id")
     private Currency currency;
+
 }

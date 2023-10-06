@@ -61,22 +61,19 @@ private String apiKey;
     }
 
     public List<Expense> changeCurrencyTo(String code, List<Expense> expenseList) {
-        List<Expense> newExpenseList = new ArrayList<>();
 
         for (int i = 0; i < expenseList.size(); i++) {
             if (!Objects.equals(expenseList.get(i).getCurrency().getCode(), code)) {
-                Expense expenseItem = expenseList.get(i);
-                expenseItem.setAmount(expenseList.get(i).getAmount()
+
+                expenseList.get(i).setAmount(expenseList.get(i).getAmount()
                         .multiply(exchangeRates.get(code))
                         .divide(exchangeRates.get(expenseList.get(i).getCurrency().getCode()), 6, RoundingMode.HALF_UP));
-                expenseItem.getCurrency().setCode(code);
-                newExpenseList.add(expenseItem);
-            } else {
-                newExpenseList.add(expenseList.get(i));
+
+
             }
 
         }
-        return newExpenseList;
+        return expenseList;
     }
 
     @Override
