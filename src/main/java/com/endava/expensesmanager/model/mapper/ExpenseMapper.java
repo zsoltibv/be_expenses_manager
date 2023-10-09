@@ -52,8 +52,7 @@ public class ExpenseMapper {
         return expenseDto;
     }
 
-    public static Expense toUpdatedExpense(Expense existingExpense, ExpenseDto expenseDto, User user, Category category, Currency currency)
-            throws ExpenseNotFoundException, UserNotFoundException, CategoryNotFoundException, CurrencyNotFoundException {
+    public static Expense toUpdatedExpense(Expense existingExpense, ExpenseDto expenseDto, User user, Category category, Currency currency) {
 
         existingExpense.setDescription(expenseDto.getDescription());
         existingExpense.setAmount(expenseDto.getAmount());

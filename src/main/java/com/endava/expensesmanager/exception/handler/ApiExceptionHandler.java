@@ -22,7 +22,7 @@ public class ApiExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiError> handleMethodArgumentNotValidException(MethodArgumentNotValidException e,
-                                                                   ServletWebRequest request) {
+                                                                          ServletWebRequest request) {
         Map<String, String> errorMap = new HashMap<>();
 
         e.getBindingResult().getFieldErrors().forEach(error -> {
@@ -38,39 +38,17 @@ public class ApiExceptionHandler {
         return new ResponseEntity<>(apiError, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(ExpenseNotFoundException.class)
-    public ResponseEntity<ApiErrorSingle> handleExpenseNotFoundException(ExpenseNotFoundException e,
-                                                            ServletWebRequest request) {
-        return getApiErrorResponseEntity(request, e.getMessage(), HttpStatus.BAD_REQUEST);
-    }
+    @ExceptionHandler({ExpenseNotFoundException.class, CategoryNotFoundException.class, CurrencyNotFoundException.class, UserNotFoundException.class})
+    public ResponseEntity<ApiErrorSingle> handleNotFoundExceptions(Exception e, ServletWebRequest request) {
 
-    @ExceptionHandler(CategoryNotFoundException.class)
-    public ResponseEntity<ApiErrorSingle> handleCategoryNotFoundException(CategoryNotFoundException e,
-                                                                   ServletWebRequest request) {
-        return getApiErrorResponseEntity(request, e.getMessage(), HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(CurrencyNotFoundException.class)
-    public ResponseEntity<ApiErrorSingle> handleCurrencyNotFoundException(CurrencyNotFoundException e,
-                                                                          ServletWebRequest request) {
-        return getApiErrorResponseEntity(request, e.getMessage(), HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(UserNotFoundException.class)
-    public ResponseEntity<ApiErrorSingle> handleUserNotFoundException(UserNotFoundException e,
-                                                                          ServletWebRequest request) {
-        return getApiErrorResponseEntity(request, e.getMessage(), HttpStatus.BAD_REQUEST);
-    }
-
-    private ResponseEntity<ApiErrorSingle> getApiErrorResponseEntity(ServletWebRequest request, String message, HttpStatus status) {
         ApiErrorSingle apiError = new ApiErrorSingle(
                 request.getRequest().getRequestURI(),
-                message,
-                status.value(),
+                e.getMessage(),
+                HttpStatus.BAD_REQUEST.value(),
                 LocalDateTime.now()
         );
 
-        return new ResponseEntity<>(apiError, status);
+        return new ResponseEntity<>(apiError, HttpStatus.BAD_REQUEST);
     }
 }
 

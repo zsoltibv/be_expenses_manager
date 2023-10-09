@@ -26,14 +26,14 @@ public class ExpenseController {
     }
 
     @PostMapping()
-    public ResponseEntity<ExpenseDto> addExpense(@RequestBody @Valid ExpenseDto expenseDto) throws RuntimeException {
+    public ResponseEntity<ExpenseDto> addExpense(@RequestBody @Valid ExpenseDto expenseDto)  {
         expenseService.addExpense(expenseDto);
         return new ResponseEntity<>(expenseDto, HttpStatus.CREATED);
     }
 
     @PutMapping("/{expenseId}")
     public ResponseEntity<ExpenseDto> editExpense(@PathVariable Integer expenseId,
-                                                  @RequestBody @Valid ExpenseDto expenseDto) throws RuntimeException {
+                                                  @RequestBody @Valid ExpenseDto expenseDto)  {
         expenseService.editExpense(expenseId, expenseDto);
         return new ResponseEntity<>(expenseDto, HttpStatus.OK);
     }
