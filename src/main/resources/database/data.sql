@@ -1,35 +1,22 @@
--- Insert RON
-INSERT IGNORE  INTO `currency` (`code`)
-VALUES ('RON');
+--
+-- Insert default currencies
+--
 
--- Insert USD
 INSERT IGNORE INTO `currency` (`code`)
-VALUES ('USD');
+VALUES
+  ('RON'),
+  ('USD'),
+  ('EUR');
 
--- Insert EUR
-INSERT IGNORE INTO `currency` (`code`)
-VALUES ('EUR');
+--
+-- Insert default categories
+--
 
--- Insert "Food & Restaurants"
 INSERT IGNORE INTO `category` (`description`, `color`)
-VALUES ('Food & Restaurants', '#5338F5');
-
--- Insert "Car"
-INSERT IGNORE INTO `category` (`description`, `color`)
-VALUES ('Car', '#1EB3DB');
-
--- Insert "Entertainment"
-INSERT IGNORE INTO `category` (`description`, `color`)
-VALUES ('Entertainment', '#FF8084');
-
--- Insert "Subscriptions"
-INSERT IGNORE INTO `category` (`description`, `color`)
-VALUES ('Subscriptions', '#E83FAB');
-
--- Insert "Coffee"
-INSERT IGNORE INTO `category` (`description`, `color`)
-VALUES ('Coffee', '#76A305');
-
--- Insert "House Hold"
-INSERT IGNORE INTO `category` (`description`, `color`)
-VALUES ('House Hold', '#17C99E');
+VALUES
+  ('Food & Restaurants', '#5338F5'),
+  ('Car', '#1EB3DB'),
+  ('Entertainment', '#FF8084'),
+  ('Subscriptions', '#E83FAB'),
+  ('Coffee', '#76A305'),
+  ('House Hold', '#17C99E');
