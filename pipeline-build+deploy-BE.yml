@@ -1,35 +1,34 @@
 name: Pipeline Build+Deply BE
 
-trigger:
- on:
+on:
   push:
-   branches:
-    - EXP-38_pipeline_build+deploy_BE
+    branches:
+      - EXP-38_pipeline_build+deploy_BE
 
 pool:
   vmImage: 'ubuntu-latest' 
 
 jobs:
-- job: Build
-   displayName: 'Build Backend Java'
-  steps:
-  - task: UseJavaVersion@0
-    inputs:
-      versionSpec: '17'
-  - script: |
-      curl -O https://apache.mirrors.nublue.co.uk/maven/maven-3/4.0.0/binaries/apache-maven-4.0.0-bin.tar.gz
-      tar -xzvf apache-maven-4.0.0-bin.tar.gz
-      sudo mv apache-maven-4.0.0 /opt/
-      sudo ln -s /opt/apache-maven-4.0.0/bin/mvn /usr/local/bin/mvn
-   displayName: 'Install Maven'
-  - script: |
-    java -version
-    mvn -version
-   displayName: 'Verify Java and Maven'
-  - script: |
-    cd D:\devopsp\git\be_expenses_manager
-     mvn clean package
-   displayName: 'Build'
+  - job: Build
+    displayName: 'Build Backend Java'
+    steps:
+      - task: UseJavaVersion@0
+        inputs:
+          versionSpec: '17'
+      - script: |
+          curl -O https://apache.mirrors.nublue.co.uk/maven/maven-3/4.0.0/binaries/apache-maven-4.0.0-bin.tar.gz
+          tar -xzvf apache-maven-4.0.0-bin.tar.gz
+          sudo mv apache-maven-4.0.0 /opt/
+          sudo ln -s /opt/apache-maven-4.0.0/bin/mvn /usr/local/bin/mvn
+        displayName: 'Install Maven'
+      - script: |
+          java -version
+          mvn -version
+        displayName: 'Verify Java and Maven'
+      - script: |
+          cd D:\devopsp\git\be_expenses_manager
+          mvn clean package
+        displayName: 'Build'
 
  # - job: Deploy
  # displayName: 'Implement on VM Azure'
