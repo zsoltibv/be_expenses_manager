@@ -12,6 +12,6 @@ public class Document {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer documentId;
-    @Column(name = "path")
-    private String path;
+    @Column(name = "name")
+    private String name;
 }

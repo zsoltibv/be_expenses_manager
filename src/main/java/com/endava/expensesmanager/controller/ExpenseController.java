@@ -20,18 +20,15 @@ import java.util.List;
 @Validated
 public class ExpenseController {
     private final ExpenseService expenseService;
-    private final DocumentService documentService;
 
-    public ExpenseController(ExpenseService expenseService, DocumentService documentService) {
+    public ExpenseController(ExpenseService expenseService) {
         this.expenseService = expenseService;
-        this.documentService = documentService;
     }
 
     @PostMapping()
-    public ResponseEntity<ExpenseDto> addExpense(@RequestPart("json") @Valid ExpenseDto expenseDto,
+    public ResponseEntity<ExpenseDto> addExpense(@RequestPart("expenseDto") @Valid ExpenseDto expenseDto,
                                                  @RequestPart(value = "file", required = false) MultipartFile file) throws IOException {
-        ExpenseDto expenseDtoWithFile = documentService.processFileUpload(file, expenseDto);
-        expenseService.addExpense(expenseDtoWithFile);
+        expenseService.addExpense(expenseDto, file);
         return new ResponseEntity<>(expenseDto, HttpStatus.CREATED);
     }
 

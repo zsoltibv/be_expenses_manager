@@ -1,9 +1,6 @@
 package com.endava.expensesmanager.service.impl;
 
-import com.endava.expensesmanager.exception.CategoryNotFoundException;
-import com.endava.expensesmanager.exception.CurrencyNotFoundException;
-import com.endava.expensesmanager.exception.ExpenseNotFoundException;
-import com.endava.expensesmanager.exception.UserNotFoundException;
+import com.endava.expensesmanager.exception.*;
 import com.endava.expensesmanager.model.dto.ExpenseDto;
 import com.endava.expensesmanager.model.entity.Category;
 import com.endava.expensesmanager.model.entity.Currency;
@@ -19,6 +16,7 @@ import com.endava.expensesmanager.service.ExpenseService;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Stream;
@@ -30,16 +28,18 @@ public class ExpenseServiceImpl implements ExpenseService {
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
     private final CurrencyRepository currencyRepository;
+    private final DocumentService documentService;
 
-    public ExpenseServiceImpl(ExpenseRepository expenseRepository, UserRepository userRepository, CategoryRepository categoryRepository, CurrencyRepository currencyRepository) {
+    public ExpenseServiceImpl(ExpenseRepository expenseRepository, UserRepository userRepository, CategoryRepository categoryRepository, CurrencyRepository currencyRepository, DocumentService documentService) {
         this.expenseRepository = expenseRepository;
         this.userRepository = userRepository;
         this.categoryRepository = categoryRepository;
         this.currencyRepository = currencyRepository;
+        this.documentService = documentService;
     }
 
     @Override
-    public void addExpense(ExpenseDto expenseDto) {
+    public void addExpense(ExpenseDto expenseDto, MultipartFile file) throws IOException{
         if (!userRepository.existsById(expenseDto.getUserId())) {
             throw new UserNotFoundException(expenseDto.getUserId());
         }
@@ -50,6 +50,11 @@ public class ExpenseServiceImpl implements ExpenseService {
 
         if (!currencyRepository.existsById(expenseDto.getCurrencyId())) {
             throw new CurrencyNotFoundException(expenseDto.getCurrencyId());
+        }
+
+        if(file != null) {
+            Integer documentId = documentService.addDocumentAndGetId(file);
+            expenseDto.setDocumentId(documentId);
         }
 
         expenseRepository.save(ExpenseMapper.toExpense(expenseDto));

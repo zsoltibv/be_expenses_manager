@@ -1,9 +1,6 @@
 package com.endava.expensesmanager.exception.handler;
 
-import com.endava.expensesmanager.exception.CategoryNotFoundException;
-import com.endava.expensesmanager.exception.CurrencyNotFoundException;
-import com.endava.expensesmanager.exception.ExpenseNotFoundException;
-import com.endava.expensesmanager.exception.UserNotFoundException;
+import com.endava.expensesmanager.exception.*;
 import com.endava.expensesmanager.exception.response.ApiError;
 import com.endava.expensesmanager.exception.response.ApiErrorSingle;
 import org.springframework.http.HttpStatus;
@@ -49,6 +46,19 @@ public class ApiExceptionHandler {
         );
 
         return new ResponseEntity<>(apiError, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler({InvalidImageFormatException.class, FileSizeExceededException.class})
+    public ResponseEntity<ApiErrorSingle> handleImageUploadExceptions(Exception e, ServletWebRequest request) {
+
+        ApiErrorSingle apiError = new ApiErrorSingle(
+                request.getRequest().getRequestURI(),
+                e.getMessage(),
+                HttpStatus.UNSUPPORTED_MEDIA_TYPE.value(),
+                LocalDateTime.now()
+        );
+
+        return new ResponseEntity<>(apiError, HttpStatus.UNSUPPORTED_MEDIA_TYPE);
     }
 }
 

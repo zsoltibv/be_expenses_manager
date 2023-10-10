@@ -45,7 +45,7 @@ CREATE TABLE IF NOT EXISTS `users` (
 
 CREATE TABLE IF NOT EXISTS `document` (
     `document_id` INT NOT NULL AUTO_INCREMENT,
-    `path` VARCHAR(255) NOT NULL,
+    `name` VARCHAR(255) NOT NULL,
     PRIMARY KEY (`document_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
