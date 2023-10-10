@@ -6,27 +6,27 @@ on:
       - EXP-38_pipeline_build+deploy_BE
 
 jobs:
-- job: Build
-  displayName: 'Build Backend Java'
-  runs-on: ubuntu-latest
-  steps:
-  - task: UseJavaVersion@0
-    inputs:
+ - job: Build
+   displayName: 'Build Backend Java'
+   runs-on: ubuntu-latest
+   steps:
+   - task: UseJavaVersion@0
+     inputs:
       versionSpec: '17'
-  - script: |
+   - script: |
       curl -O https://apache.mirrors.nublue.co.uk/maven/maven-3/4.0.0/binaries/apache-maven-4.0.0-bin.tar.gz
       tar -xzvf apache-maven-4.0.0-bin.tar.gz
       sudo mv apache-maven-4.0.0 /opt/
       sudo ln -s /opt/apache-maven-4.0.0/bin/mvn /usr/local/bin/mvn
       displayName:'Install Maven'
-  - script: |
-     java -version
-     mvn -version
-    displayName: 'Verify Java and Maven'
-  - script: |
-     cd src/main/java/com/endava/expensesmanager
-     mvn clean package
-    displayName: 'Build'
+   - script: |
+      java -version
+      mvn -version
+     displayName: 'Verify Java and Maven'
+   - script: |
+      cd src/main/java/com/endava/expensesmanager
+      mvn clean package
+     displayName: 'Build'
 
 #  - job: Deploy
  #   displayName: 'Implement on VM Azure'
