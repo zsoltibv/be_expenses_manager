@@ -37,7 +37,7 @@ public class ExpenseServiceImpl implements ExpenseService {
     }
 
     @Override
-    public void addExpense(ExpenseDto expenseDto) throws RuntimeException {
+    public void addExpense(ExpenseDto expenseDto) {
         if (!userRepository.existsById(expenseDto.getUserId())) {
             throw new UserNotFoundException(expenseDto.getUserId());
         }
@@ -54,7 +54,7 @@ public class ExpenseServiceImpl implements ExpenseService {
     }
 
     @Override
-    public void editExpense(Integer expenseId, ExpenseDto expenseDto) throws RuntimeException {
+    public void editExpense(Integer expenseId, ExpenseDto expenseDto) {
         Expense existingExpense = expenseRepository.findById(expenseId)
                 .orElseThrow(() -> new ExpenseNotFoundException(expenseId));
 

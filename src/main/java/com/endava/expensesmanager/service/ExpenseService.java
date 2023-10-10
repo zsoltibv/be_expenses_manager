@@ -11,7 +11,7 @@ import java.util.List;
 
 
 public interface ExpenseService {
-        void addExpense(ExpenseDto expenseDto) throws RuntimeException;
-        void editExpense(Integer expenseId, ExpenseDto expenseDto) throws RuntimeException;
+        void addExpense(ExpenseDto expenseDto);
+        void editExpense(Integer expenseId, ExpenseDto expenseDto);
         List<ExpenseDto> getExpensesByUserId(Integer userId, LocalDate startDate, LocalDate endDate);
 }
