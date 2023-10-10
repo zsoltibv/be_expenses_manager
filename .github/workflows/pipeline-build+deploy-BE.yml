@@ -4,12 +4,11 @@ on:
  push:
     branches:
       - EXP-38_pipeline_build+deploy_BE
-
 jobs:
- - job: Build
-   displayName: 'Build Backend Java'
-   runs-on: ubuntu-latest
-   steps:
+- job: Build
+  displayName: 'Build Backend Java'
+  runs-on: ubuntu-latest
+  steps:
    - task: UseJavaVersion@0
      inputs:
       versionSpec: '17'
