@@ -28,4 +28,5 @@ public class ExpenseDto {
     private Integer categoryId;
     @NotNull(message = "Currency id required")
     private Integer currencyId;
+    private Integer documentId;
 }

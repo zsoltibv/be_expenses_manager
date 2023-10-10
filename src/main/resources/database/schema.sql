@@ -26,7 +26,9 @@ CREATE TABLE IF NOT EXISTS `currency` (
   UNIQUE KEY `code_UNIQUE` (`code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-
+--
+-- Table structure for table `users`
+--
 
 CREATE TABLE IF NOT EXISTS `users` (
   `user_id` int NOT NULL AUTO_INCREMENT,
@@ -35,6 +37,16 @@ CREATE TABLE IF NOT EXISTS `users` (
   PRIMARY KEY (`user_id`),
   UNIQUE KEY `user_id_UNIQUE` (`user_id`),
   UNIQUE KEY `name_UNIQUE` (`name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Table structure for table `documents`
+--
+
+CREATE TABLE IF NOT EXISTS `document` (
+    `document_id` INT NOT NULL AUTO_INCREMENT,
+    `path` VARCHAR(255) NOT NULL,
+    PRIMARY KEY (`document_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
@@ -49,13 +61,15 @@ CREATE TABLE IF NOT EXISTS `expenses` (
   `category_id` int NOT NULL,
   `expense_date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `user_id` int NOT NULL,
+  `document_id` int,
   PRIMARY KEY (`expense_id`),
   UNIQUE KEY `expenses_id_UNIQUE` (`expense_id`),
   KEY `user_id_idx` (`user_id`),
   KEY `currency_id_idx` (`currency_id`),
   KEY `category_id_idx` (`category_id`),
+  KEY `document_id_idx` (`document_id`),
   CONSTRAINT `category_id` FOREIGN KEY (`category_id`) REFERENCES `category` (`category_id`),
   CONSTRAINT `currency_id` FOREIGN KEY (`currency_id`) REFERENCES `currency` (`currency_id`),
-  CONSTRAINT `user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`)
+  CONSTRAINT `user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`),
+  CONSTRAINT `document_id` FOREIGN KEY (`document_id`) REFERENCES `document` (`document_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-

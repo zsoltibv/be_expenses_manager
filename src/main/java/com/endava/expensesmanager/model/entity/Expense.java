@@ -1,10 +1,7 @@
 package com.endava.expensesmanager.model.entity;
 
-import com.endava.expensesmanager.model.dto.ExpenseDto;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
@@ -33,4 +30,7 @@ public class Expense {
     @ManyToOne
     @JoinColumn(name = "currency_id")
     private Currency currency;
+    @OneToOne
+    @JoinColumn(name = "document_id")
+    private Document document;
 }

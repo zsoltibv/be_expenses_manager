@@ -14,8 +14,10 @@ import com.endava.expensesmanager.repository.CategoryRepository;
 import com.endava.expensesmanager.repository.CurrencyRepository;
 import com.endava.expensesmanager.repository.ExpenseRepository;
 import com.endava.expensesmanager.repository.UserRepository;
+import com.endava.expensesmanager.service.DocumentService;
 import com.endava.expensesmanager.service.ExpenseService;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.util.List;
