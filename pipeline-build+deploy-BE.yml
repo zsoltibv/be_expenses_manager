@@ -1,9 +1,10 @@
 name: Pipeline Build+Deply BE
 
 trigger:
-    branches:
-      include:
-      - exp38-pipeline-build+deploy-BE
+ on:
+  push:
+   branches:
+    - EXP-38_pipeline_build+deploy_BE
 
 pool:
   vmImage: 'ubuntu-latest' 
@@ -30,24 +31,13 @@ jobs:
      mvn clean package
    displayName: 'Build'
 
-  - job: Deploy
-  displayName: 'Implement on VM Azure'
-  steps:
-  - script: |
-    ssh -i D:/devopsp/git/be_expenses_manager/vmback_ssh_key azureuser@20.1252120120320 << EOF
-      VM_IP="20.1252120120320"
-  - name: Verify repo
-    uses: actions/checkout@v2
-  - name: Set enviroment variable
-      run: |
-        echo "::set-env name=MY_INPUT::$(read -p 'Type an value: ' input && echo $input)"
-      shell: bash
-  - name: Use enviroment variable
-      run: |
-        echo "The value: $MY_INPUT"
-      VM_USER="azureuser"
-      SSH_PRIVATE_KEY="D:/devopsp/git/vmback_ssh_key.pem"
-      LOCAL_ARTIFACT_PATH="/path/to/artifact.jar"
-      REMOTE_DESTINATION="/path/on/vm/"
-      scp -i "$SSH_PRIVATE_KEY" -r "$LOCAL_ARTIFACT_PATH" "$VM_USER@$VM_IP:$REMOTE_DESTINATION"
-  displayName: 'Transffer Artefact to VM'
+ # - job: Deploy
+ # displayName: 'Implement on VM Azure'
+ # steps:
+  #- script: |
+   # ssh -i D:/devopsp/git/be_expenses_manager/vmback_ssh_key azureuser@20.1252120120320 << EOF
+    #  VM_IP="20.1252120120320"
+     # SSH_PRIVATE_KEY="D:/devopsp/git/vmback_ssh_key.pem"
+     # REMOTE_DESTINATION="/path/on/vm/"
+     # scp -i "$SSH_PRIVATE_KEY" -r "$LOCAL_ARTIFACT_PATH" "$VM_USER@$VM_IP:$REMOTE_DESTINATION"
+   #displayName: 'Transffer Artefact to VM'
