@@ -1,9 +1,19 @@
 package com.endava.expensesmanager.service.impl;
 
+import com.endava.expensesmanager.exception.CategoryNotFoundException;
+import com.endava.expensesmanager.exception.CurrencyNotFoundException;
+import com.endava.expensesmanager.exception.ExpenseNotFoundException;
+import com.endava.expensesmanager.exception.UserNotFoundException;
 import com.endava.expensesmanager.model.dto.ExpenseDto;
+import com.endava.expensesmanager.model.entity.Category;
+import com.endava.expensesmanager.model.entity.Currency;
 import com.endava.expensesmanager.model.entity.Expense;
+import com.endava.expensesmanager.model.entity.User;
 import com.endava.expensesmanager.model.mapper.ExpenseMapper;
+import com.endava.expensesmanager.repository.CategoryRepository;
+import com.endava.expensesmanager.repository.CurrencyRepository;
 import com.endava.expensesmanager.repository.ExpenseRepository;
+import com.endava.expensesmanager.repository.UserRepository;
 import com.endava.expensesmanager.service.ExpenseService;
 import org.springframework.stereotype.Service;
 
@@ -15,32 +25,68 @@ import java.util.stream.Stream;
 @Service
 public class ExpenseServiceImpl implements ExpenseService {
     private final ExpenseRepository expenseRepository;
+    private final UserRepository userRepository;
+    private final CategoryRepository categoryRepository;
+    private final CurrencyRepository currencyRepository;
 
-    public ExpenseServiceImpl(ExpenseRepository expenseRepository) {
+    public ExpenseServiceImpl(ExpenseRepository expenseRepository, UserRepository userRepository, CategoryRepository categoryRepository, CurrencyRepository currencyRepository) {
         this.expenseRepository = expenseRepository;
+        this.userRepository = userRepository;
+        this.categoryRepository = categoryRepository;
+        this.currencyRepository = currencyRepository;
     }
 
     @Override
-    public Expense addExpense(ExpenseDto expense) {
-        return expenseRepository.save(ExpenseMapper.toExpense(expense));
+    public void addExpense(ExpenseDto expenseDto) {
+        if (!userRepository.existsById(expenseDto.getUserId())) {
+            throw new UserNotFoundException(expenseDto.getUserId());
+        }
+
+        if (!categoryRepository.existsById(expenseDto.getCategoryId())) {
+            throw new CategoryNotFoundException(expenseDto.getCategoryId());
+        }
+
+        if (!currencyRepository.existsById(expenseDto.getCurrencyId())) {
+            throw new CurrencyNotFoundException(expenseDto.getCurrencyId());
+        }
+
+        expenseRepository.save(ExpenseMapper.toExpense(expenseDto));
     }
 
     @Override
-    public List<ExpenseDto> getExpensesByUserId(Integer userId, LocalDate startDate, LocalDate endDate){
+    public void editExpense(Integer expenseId, ExpenseDto expenseDto) {
+        Expense existingExpense = expenseRepository.findById(expenseId)
+                .orElseThrow(() -> new ExpenseNotFoundException(expenseId));
+
+        User user = userRepository.findById(expenseDto.getUserId())
+                .orElseThrow(() -> new UserNotFoundException(expenseDto.getUserId()));
+
+        Category category = categoryRepository.findById(expenseDto.getCategoryId())
+                .orElseThrow(() -> new CategoryNotFoundException(expenseDto.getCategoryId()));
+
+        Currency currency = currencyRepository.findById(expenseDto.getCurrencyId())
+                .orElseThrow(() -> new CurrencyNotFoundException(expenseDto.getCurrencyId()));
+
+        Expense updatedExpense = ExpenseMapper.toUpdatedExpense(existingExpense, expenseDto, user, category, currency);
+
+        expenseRepository.save(updatedExpense);
+    }
+
+    @Override
+    public List<ExpenseDto> getExpensesByUserId(Integer userId, LocalDate startDate, LocalDate endDate) {
 
         Stream<Expense> expensesStream = expenseRepository.findAll().stream()
                 .filter(expense -> expense.getUser().getUserId().equals(userId));
 
-        if(startDate != null){
+        if (startDate != null) {
             expensesStream = expensesStream.filter(expense -> expense.getExpenseDate().toLocalDate().isAfter(startDate)
                     || expense.getExpenseDate().toLocalDate().isEqual(startDate));
         }
 
-        if(endDate != null){
+        if (endDate != null) {
             expensesStream = expensesStream.filter(expense -> expense.getExpenseDate().toLocalDate().isBefore(endDate)
                     || expense.getExpenseDate().toLocalDate().isEqual(endDate));
-        }
-        else {
+        } else {
             expensesStream = expensesStream.filter(expense -> expense.getExpenseDate().toLocalDate().isBefore(LocalDate.now())
                     || expense.getExpenseDate().toLocalDate().isEqual(LocalDate.now()));
         }

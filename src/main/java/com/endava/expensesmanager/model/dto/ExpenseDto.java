@@ -17,7 +17,7 @@ public class ExpenseDto {
     private String description;
     @NotNull(message = "Amount is required")
     @DecimalMin(value = "0.01", message = "Amount must be greater than or equal to 0.01")
-    @Digits(integer = 10, fraction = 2, message = "Amount can have at most 2 decimal places")
+    @Digits(integer = 10, fraction = 2, message = "Amount can have at most 2 decimal places and 10 digits")
     private BigDecimal amount;
     @NotNull(message = "Expense date is required")
     @PastOrPresent(message = "Expense date can not exceed today's date")
