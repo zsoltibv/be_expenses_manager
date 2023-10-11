@@ -24,9 +24,7 @@ jobs:
           mvn -version
        
    - name: Build
-     run: |
-          cd src/main/java/com/endava
-          mvn clean package
+     run: mvn clean package
 
 #   job: Deploy
  #   displayName: 'Implement on VM Azure'
