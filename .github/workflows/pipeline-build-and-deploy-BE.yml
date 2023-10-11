@@ -14,11 +14,10 @@ jobs:
        distribution: 'adopt'
        java-version: '17'
    - name: Install Maven
-     run: |
-         curl -k -O https://apache.mirrors.nublue.co.uk/maven/maven-3/4.0.0/binaries/apache-maven-4.0.0-bin.tar.gz
-         tar -xzvf apache-maven-4.0.0-bin.tar.gz
-         sudo mv apache-maven-4.0.0-bin/opt/
-         sudo ln -s /opt/apache-maven-4.0.0-bin/bin/mvn /usr/local/bin/mvn
+     uses: actions/install-maven@v2
+     with:
+       distribution: 'adopt'
+       maven-version: '4.0.0'
 
    - name: Verify Java and Maven
      run: |
