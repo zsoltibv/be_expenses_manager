@@ -14,10 +14,10 @@ jobs:
        distribution: 'adopt'
        java-version: '17'
    - name: Install Maven
-     uses: actions/install-maven@v2
+     uses: actions/setup-java@v2
      with:
-       distribution: 'adopt'
-       maven-version: '4.0.0'
+        distribution: 'maven'
+        java-version: '4.0.0' 
 
    - name: Verify Java and Maven
      run: |
