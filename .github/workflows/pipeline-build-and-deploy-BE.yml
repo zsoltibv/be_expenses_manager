@@ -15,7 +15,7 @@ jobs:
        java-version: '17'
    - name: Install Maven
      run: |
-        curl -O https://maven.apache.org/download.cgi/apache-maven-4.0.0-alpha-7-bin.zip
+        curl -O https://archive.apache.org/dist/maven/maven-3/4.0.0-alpha-7/binaries/apache-maven-4.0.0-alpha-7-bin.zip
         unzip apache-maven-4.0.0-alpha-7-bin.zip
         export PATH=$PATH:$(pwd)/apache-maven-4.0.0-alpha-7/bin
    #  uses: stCarolas/setup-maven@v4.5
