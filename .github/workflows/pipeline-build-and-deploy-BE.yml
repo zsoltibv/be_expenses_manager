@@ -14,10 +14,14 @@ jobs:
        distribution: 'adopt'
        java-version: '17'
    - name: Install Maven
-     uses: stCarolas/setup-maven@v4.5
-     with:
-        maven-version: 3.9.5
-
+     run: |
+        curl -O https://maven.apache.org/download.cgi/apache-maven-4.0.0-alpha-7-bin.zip
+        unzip apache-maven-4.0.0-alpha-7-bin.zip
+        export PATH=$PATH:$(pwd)/apache-maven-4.0.0-alpha-7/bin
+   #  uses: stCarolas/setup-maven@v4.5
+    # with:
+     #   maven-version: 3.9.5
+ 
    - name: Verify Java and Maven
      run: |
           java -version
