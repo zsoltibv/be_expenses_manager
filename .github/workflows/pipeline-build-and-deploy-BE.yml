@@ -1,0 +1,43 @@
+name: Pipeline-build-and-deploy-BE
+
+on:
+ push:
+    branches:
+      - EXP-38_pipeline_build+deploy_BE
+jobs:
+  build:
+   runs-on: ubuntu-latest
+   steps:
+   - name: Set up Java
+     uses: actions/setup-java@v2
+     with:
+       java-version: '17'
+   - name: Install Maven
+     run: |
+          curl -O https://apache.mirrors.nublue.co.uk/maven/maven-3/4.0.0/binaries/apache-maven-4.0.0-bin.tar.gz
+          tar -xzvf apache-maven-4.0.0-bin.tar.gz
+          sudo mv apache-maven-4.0.0 /opt/
+          sudo ln -s /opt/apache-maven-4.0.0/bin/mvn /usr/local/bin/mvn
+
+   - name: Verify Java and Maven
+     run: |
+          java -version
+          mvn -version
+       
+   - name: Build
+     run: |
+          cd src/main/java/com/endava/expensesmanager
+          mvn clean package
+
+#   job: Deploy
+ #   displayName: 'Implement on VM Azure'
+  #  steps:
+  #- script: |
+   #  ssh -i D:/devopsp/git/be_expenses_manager/vmback_ssh_key azureuser@20.1252120120320 << EOF
+    #  VM_IP="20.1252120120320"
+     # VM_USER="azureuser"
+     # SSH_PRIVATE_KEY="D:/devopsp/git/vmback_ssh_key.pem"
+     # LOCAL_ARTIFACT_PATH="/path/to/artifact.jar"
+     # REMOTE_DESTINATION="/path/on/vm/"
+     # scp -i "$SSH_PRIVATE_KEY" -r "$LOCAL_ARTIFACT_PATH" "$VM_USER@$VM_IP:$REMOTE_DESTINATION"
+    #displayName: 'Transffer Artefact to VM'
