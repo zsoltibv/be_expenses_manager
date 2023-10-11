@@ -14,9 +14,9 @@ jobs:
        distribution: 'adopt'
        java-version: '17'
    - name: Install Maven
-     uses: s4u/setup-maven-action@v4.0.0
+     uses: stCarolas/setup-maven@v4.5
      with:
-      java-version: '17'
+        maven-version: 4.0.0
 
    - name: Verify Java and Maven
      run: |
