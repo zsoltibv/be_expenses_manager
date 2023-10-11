@@ -24,7 +24,9 @@ jobs:
           mvn -version
        
    - name: Build
-     run: mvn clean package
+     run: |
+      cd pom.xml
+      mvn clean package
 
 #   job: Deploy
  #   displayName: 'Implement on VM Azure'
