@@ -1,4 +1,4 @@
-name: Pipeline-build-and-deploy-BE
+name: Pipeline-build+deploy-BE
 
 on:
  push:
