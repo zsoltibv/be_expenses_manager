@@ -16,7 +16,7 @@ jobs:
    - name: Install Maven
      run: |
           curl -O https://apache.mirrors.nublue.co.uk/maven/maven-3/4.0.0/binaries/apache-maven-4.0.0-bin.tar.gz
-          tar -xzvf apache-maven-4.0.0-bin.zip
+          tar -xzvf apache-maven-4.0.0-bin.tar.gz
           sudo mv apache-maven-4.0.0-bin/opt/
           sudo ln -s /opt/apache-maven-4.0.0-bin/bin/mvn /usr/local/bin/mvn
 
