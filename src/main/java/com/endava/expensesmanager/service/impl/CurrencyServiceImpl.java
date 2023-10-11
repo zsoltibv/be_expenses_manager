@@ -64,7 +64,6 @@ private String apiKey;
                 expenseItem.setAmount(expenseList.get(i).getAmount()
                         .multiply(exchangeRates.get(code))
                         .divide(exchangeRates.get(expenseList.get(i).getCurrency().getCode()), 6, RoundingMode.HALF_UP));
-                expenseItem.getCurrency().setCode(code);
                 newExpenseList.add(expenseItem);
             } else {
                 newExpenseList.add(expenseList.get(i));

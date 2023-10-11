@@ -58,7 +58,7 @@ public class ExpenseServiceImpl implements ExpenseService {
     }
 
     public List<Expense> getExpensesByBeginDateAndEndDate(LocalDate beginDate, LocalDate endDate, Integer userId) {
-        return expenseRepository.findExpensesBetweenDatesForUser(beginDate, endDate, userId);
+        return expenseRepository.findExpensesBetweenDatesForUser(beginDate.atStartOfDay(), endDate.atStartOfDay(), userId);
     }
 
     @Override
