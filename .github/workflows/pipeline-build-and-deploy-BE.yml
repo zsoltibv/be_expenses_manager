@@ -15,8 +15,8 @@ jobs:
        java-version: '17'
    - name: Install Maven
      run: |
-          curl -O https://maven.apache.org/download.cgi/apache-maven-4.0.0-alpha-7-bin.tar.gz
-          tar -xzvf apache-maven-4.0.0-alpha-7-bin.tar.gz
+          curl -O https://maven.apache.org/download.cgi/apache-maven-4.0.0-alpha-7-bin.zip
+          tar -xzvf apache-maven-4.0.0-alpha-7-bin.zip
           sudo mv apache-maven-4.0.0-alpha-7-bin/opt/
           sudo ln -s /opt/apache-maven-4.0.0-alpha-7-bin/bin/mvn /usr/local/bin/mvn
 
