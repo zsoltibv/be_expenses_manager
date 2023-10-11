@@ -15,10 +15,10 @@ jobs:
        java-version: '17'
    - name: Install Maven
      run: |
-          curl -O https://apache.mirrors.nublue.co.uk/maven/maven-3/4.0.0/binaries/apache-maven-4.0.0-bin.tar.gz
-          tar -xzvf apache-maven-4.0.0-bin.tar.gz
-          sudo mv apache-maven-4.0.0 /opt/
-          sudo ln -s /opt/apache-maven-4.0.0/bin/mvn /usr/local/bin/mvn
+          curl -O https://maven.apache.org/download.cgi/apache-maven-4.0.0-alpha-7-bin.tar.gz
+          tar -xzvf apache-maven-4.0.0-alpha-7-bin.tar.gz
+          sudo mv apache-maven-4.0.0-alpha-7-bin/opt/
+          sudo ln -s /opt/apache-maven-4.0.0-alpha-7-bin/bin/mvn /usr/local/bin/mvn
 
    - name: Verify Java and Maven
      run: |
