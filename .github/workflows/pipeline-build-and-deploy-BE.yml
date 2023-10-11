@@ -16,7 +16,7 @@ jobs:
    - name: Install Maven
      uses: stCarolas/setup-maven@v4.5
      with:
-        maven-version: 3.9.5
+        maven-version: 3.9.5 #incercam cu versiunea 3.9.5 momentan deoarece 4.0.0 nu e disponibila 
  
    - name: Verify Java and Maven
      run: |
@@ -25,7 +25,7 @@ jobs:
        
    - name: Build
      run: |
-      cd pom.xml
+      cd src/main/java/com/endava/expensesmanager/repository
       mvn clean package
 
 #   job: Deploy
