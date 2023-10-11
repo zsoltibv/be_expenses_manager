@@ -16,7 +16,7 @@ jobs:
    - name: Install Maven
      uses: stCarolas/setup-maven@v4.5
      with:
-        maven-version: 4.0.0
+        maven-version: 3.9.5
 
    - name: Verify Java and Maven
      run: |
