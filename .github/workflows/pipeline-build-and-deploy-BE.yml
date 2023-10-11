@@ -1,9 +1,9 @@
-name: Pipeline-build+deploy-BE
+name: Pipeline-build-and-deploy-BE
 
 on:
  push:
     branches:
-      - EXP-38_pipeline_build+deploy_BE
+      - EXP-38_pipeline_build_and_deploy_BE
 jobs:
   build:
    runs-on: ubuntu-latest
