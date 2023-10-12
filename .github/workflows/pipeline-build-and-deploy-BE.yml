@@ -25,8 +25,8 @@ jobs:
        
    - name: Build
      run: |
+      working-directory: -f ../pom.xml
       mvn clean package
-      working-directory: pom.xml
 #   job: Deploy
  #   displayName: 'Implement on VM Azure'
   #  steps:
