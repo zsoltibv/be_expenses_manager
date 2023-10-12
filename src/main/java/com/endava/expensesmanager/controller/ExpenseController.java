@@ -19,12 +19,12 @@ import java.util.Map;
 @Validated
 public class ExpenseController {
     private final ExpenseService expenseService;
-    private final CurrencyService currencyService;
+
 
 
     public ExpenseController(ExpenseService expenseService, CurrencyService currencyService) {
         this.expenseService = expenseService;
-        this.currencyService = currencyService;
+
     }
 
     @PostMapping()
@@ -40,33 +40,11 @@ public class ExpenseController {
         return new ResponseEntity<>(expenses, HttpStatus.OK);
     }
 
-    @GetMapping("/total")
-    public ResponseEntity<?> getTotalSum(@RequestParam int userId, @RequestParam LocalDate startDate, @RequestParam LocalDate endDate, @RequestParam String code) {
-        List<Expense> expenses = currencyService.changeCurrencyTo(code, expenseService.getExpensesByDates(startDate, endDate, userId));
-        BigDecimal sum = BigDecimal.ZERO;
-        for (int i = 0; i < expenses.size(); i++) {
-            sum = sum.add(expenses.get(i).getAmount());
-        }
-        return new ResponseEntity<>(sum, HttpStatus.OK);
-    }
 
-    @GetMapping("/category")
-    public ResponseEntity<?> getTotalSumCategory(@RequestParam int userId, @RequestParam LocalDate startDate, @RequestParam LocalDate endDate, @RequestParam String code) {
-        if (endDate.isAfter(LocalDate.now()))
-            return new ResponseEntity<>("The end date is invalid", HttpStatus.BAD_REQUEST);
 
-        List<Expense> expenses = currencyService.changeCurrencyTo(code, expenseService.getExpensesByDates(startDate, endDate, userId));
 
-        Map<String, BigDecimal> resultMap = expenseService.sortExpenses(expenses);
 
-        return new ResponseEntity<>(resultMap, HttpStatus.OK);
 
-    }
-
-    @GetMapping("/currencies")
-    public ResponseEntity<?> getCurrencies() {
-        return new ResponseEntity<>(currencyService.getCurrencies(), HttpStatus.OK);
-    }
 
 }
 

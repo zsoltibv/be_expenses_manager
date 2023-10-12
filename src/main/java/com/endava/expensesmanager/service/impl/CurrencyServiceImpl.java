@@ -1,8 +1,13 @@
 package com.endava.expensesmanager.service.impl;
 
+import com.endava.expensesmanager.model.dto.CurrencyDto;
 import com.endava.expensesmanager.model.dto.ExchangeRatesDto;
+import com.endava.expensesmanager.model.entity.Currency;
 import com.endava.expensesmanager.model.entity.Expense;
+import com.endava.expensesmanager.model.mapper.CurrencyMapper;
+import com.endava.expensesmanager.repository.CurrencyRepository;
 import com.endava.expensesmanager.service.CurrencyService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -24,6 +29,10 @@ public class CurrencyServiceImpl implements CurrencyService {
 private String apiKey;
 
     private WebClient webClient = WebClient.builder().build();
+    @Autowired
+    CurrencyRepository currencyRepository;
+
+    CurrencyMapper currencyMapper=new CurrencyMapper();
 
     private ExchangeRatesDto exchangeRatesDto;
     private HashMap<String, BigDecimal> exchangeRates=new HashMap<>();
@@ -56,24 +65,28 @@ private String apiKey;
     }
 
     public List<Expense> changeCurrencyTo(String code, List<Expense> expenseList) {
-        List<Expense> newExpenseList = new ArrayList<>();
 
-        for (int i = 0; i < expenseList.size(); i++) {
-            if (!Objects.equals(expenseList.get(i).getCurrency().getCode(), code)) {
-                Expense expenseItem = expenseList.get(i);
-                expenseItem.setAmount(expenseList.get(i).getAmount()
+
+        for (Expense expense : expenseList) {
+            if (!Objects.equals(expense.getCurrency().getCode(), code)) {
+
+                expense.setAmount(expense.getAmount()
                         .multiply(exchangeRates.get(code))
-                        .divide(exchangeRates.get(expenseList.get(i).getCurrency().getCode()), 6, RoundingMode.HALF_UP));
-                newExpenseList.add(expenseItem);
-            } else {
-                newExpenseList.add(expenseList.get(i));
-            }
+                        .divide(exchangeRates.get(expense.getCurrency().getCode()), 6, RoundingMode.HALF_UP));
+                expense.setCurrency(currencyRepository.findByCode(code));
 
+            }
         }
-        return newExpenseList;
+        return expenseList;
     }
-    public List<String> getCurrencies()
+    public List<CurrencyDto> getCurrencies()
     {
-        return currencies;
+        List<Currency> currencies1= currencyRepository.findAll();
+        List<CurrencyDto> currencies2= new ArrayList<>();
+        for(Currency currency:currencies1)
+        {
+            currencies2.add(currencyMapper.toCurrencyDto(currency));
+        }
+        return currencies2;
     }
 }
