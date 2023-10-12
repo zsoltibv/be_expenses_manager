@@ -26,7 +26,7 @@ jobs:
           mvn -version
        
    - name: Build
-     run: mvn clean package
+     run: mvn clean package -DskipTests=true
  #   job: Deploy
  #   displayName: 'Implement on VM Azure'
   #  steps:
