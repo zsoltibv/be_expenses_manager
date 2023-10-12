@@ -27,7 +27,7 @@ jobs:
        
    - name: Build
      run: |
-       mvn clean package -f ../pom.xml
+       mvn clean package -f /home/runner/work/be_expenses_manager/pom.xml
   
  #   job: Deploy
  #   displayName: 'Implement on VM Azure'
