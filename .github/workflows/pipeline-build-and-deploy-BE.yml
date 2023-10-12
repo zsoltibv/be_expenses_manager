@@ -26,7 +26,7 @@ jobs:
    - name: Build
      run: |
       mvn clean package
-      working-directory: src/main/java/com/endava/expensesmanager
+      working-directory: pom.xml
 #   job: Deploy
  #   displayName: 'Implement on VM Azure'
   #  steps:
