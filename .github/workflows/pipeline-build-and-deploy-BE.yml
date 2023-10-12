@@ -25,7 +25,7 @@ jobs:
        
    - name: Build
      run: |
-      cd src/main/java/com/endava/expensesmanager/repository
+      ls /src/main/java/com/endava/expensesmanager/repository
       mvn clean package
 
 #   job: Deploy
