@@ -25,6 +25,7 @@ jobs:
        
    - name: Build
      run: |
+       ls
        mvn clean package -f ../pom.xml
   
  #   job: Deploy
