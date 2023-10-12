@@ -5,11 +5,14 @@ import com.endava.expensesmanager.model.entity.Currency;
 import com.endava.expensesmanager.model.entity.User;
 import jakarta.validation.constraints.*;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
+
 public class ExpenseDto {
     private Integer expenseId;
     @NotBlank(message = "Description is required")
@@ -28,4 +31,5 @@ public class ExpenseDto {
     private Integer categoryId;
     @NotNull(message = "Currency id required")
     private Integer currencyId;
+
 }

@@ -1,5 +1,6 @@
 package com.endava.expensesmanager.service.impl;
 
+import com.endava.expensesmanager.model.dto.ExpenseDto;
 import com.endava.expensesmanager.model.entity.Expense;
 import com.endava.expensesmanager.service.CurrencyService;
 import com.endava.expensesmanager.service.ExpenseService;
@@ -22,16 +23,16 @@ public class TotalServiceImpl {
 
     public BigDecimal totalExpenseSum(int userId, LocalDate startDate, LocalDate endDate, String code)
     {
-        List<Expense> expenses = currencyService.changeCurrencyTo(code, expenseService.getExpensesByDates(startDate, endDate, userId));
+        List<ExpenseDto> expenses = currencyService.changeCurrencyTo(code, expenseService.getExpensesByBeginDateAndEndDate(startDate, endDate, userId));
         BigDecimal sum = BigDecimal.ZERO;
-        for (Expense expens : expenses) {
+        for (ExpenseDto expens : expenses) {
             sum = sum.add(expens.getAmount());
         }
         return sum;
     }
     public Map<String,BigDecimal> totalExpenseCategory(int userId,LocalDate startDate,LocalDate endDate,String code)
     {
-        List<Expense> expenses = currencyService.changeCurrencyTo(code, expenseService.getExpensesByDates(startDate, endDate, userId));
+        List<ExpenseDto> expenses = currencyService.changeCurrencyTo(code, expenseService.getExpensesByBeginDateAndEndDate(startDate, endDate, userId));
 
 
         return expenseService.sortExpenses(expenses);

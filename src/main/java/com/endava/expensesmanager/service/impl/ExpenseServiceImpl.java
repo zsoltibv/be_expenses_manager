@@ -5,6 +5,7 @@ import com.endava.expensesmanager.model.dto.ExchangeRatesDto;
 import com.endava.expensesmanager.model.entity.Category;
 import com.endava.expensesmanager.model.entity.Expense;
 import com.endava.expensesmanager.model.mapper.ExpenseMapper;
+import com.endava.expensesmanager.repository.CategoryRepository;
 import com.endava.expensesmanager.repository.ExpenseRepository;
 import com.endava.expensesmanager.service.ExpenseService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,9 +22,11 @@ import java.util.stream.Stream;
 @Service
 public class ExpenseServiceImpl implements ExpenseService {
     private final ExpenseRepository expenseRepository;
+    private final CategoryRepository categoryRepository;
 
-    public ExpenseServiceImpl(ExpenseRepository expenseRepository) {
+    public ExpenseServiceImpl(ExpenseRepository expenseRepository,CategoryRepository categoryRepository) {
         this.expenseRepository = expenseRepository;
+        this.categoryRepository=categoryRepository;
     }
 
 
@@ -57,20 +60,23 @@ public class ExpenseServiceImpl implements ExpenseService {
 
     }
 
-    public List<Expense> getExpensesByBeginDateAndEndDate(LocalDate beginDate, LocalDate endDate, Integer userId) {
-        return expenseRepository.findExpensesBetweenDatesForUser(beginDate.atStartOfDay(), endDate.atStartOfDay(), userId);
+    public List<ExpenseDto> getExpensesByBeginDateAndEndDate(LocalDate beginDate, LocalDate endDate, Integer userId) {
+         List <Expense>  expenses=expenseRepository.findExpensesBetweenDatesForUser(beginDate.atStartOfDay(), endDate.atStartOfDay(), userId);
+         List<ExpenseDto> expenseDto= new ArrayList<>();
+         for(Expense expense:expenses)
+         {
+             expenseDto.add(ExpenseMapper.toDto(expense));
+         }
+         return expenseDto;
     }
 
-    @Override
-    public List<Expense> getExpensesByDates(LocalDate beginDate, LocalDate endDate, Integer userId) {
-        return this.getExpensesByBeginDateAndEndDate(beginDate, endDate, userId);
-    }
 
-    public Map<String, BigDecimal> sortExpenses(List<Expense> expenses) {
+
+    public Map<String, BigDecimal> sortExpenses(List<ExpenseDto> expenses) {
         return expenses.stream()
                 .collect(Collectors.groupingBy(
-                        expense -> expense.getCategory().getDescription(),
-                        Collectors.mapping(Expense::getAmount, Collectors.reducing(BigDecimal.ZERO, BigDecimal::add))
+                        expense -> categoryRepository.findById(expense.getCategoryId()).get().getDescription(),
+                        Collectors.mapping(ExpenseDto::getAmount, Collectors.reducing(BigDecimal.ZERO, BigDecimal::add))
                 ));
     }
 }

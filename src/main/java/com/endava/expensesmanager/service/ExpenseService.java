@@ -10,9 +10,8 @@ import java.util.Map;
 public interface ExpenseService {
     Expense addExpense(ExpenseDto expense);
     List<ExpenseDto> getExpensesByUserId(Integer userId, LocalDate startDate, LocalDate endDate);
-    List<Expense> getExpensesByBeginDateAndEndDate(LocalDate beginDate, LocalDate endDate, Integer userId);
-    List<Expense> getExpensesByDates(LocalDate beginDate, LocalDate endDate, Integer userId);
-    Map<String, BigDecimal> sortExpenses(List<Expense> expenses);
+    List<ExpenseDto> getExpensesByBeginDateAndEndDate(LocalDate beginDate, LocalDate endDate, Integer userId);
+    Map<String, BigDecimal> sortExpenses(List<ExpenseDto> expenses);
 
 
 }
