@@ -53,11 +53,12 @@ jobs:
        # sudo mkdir be_expenses_manager
        #cd be_expenses_manager
        ls
+       sudo chown -R $USER:$USER be_expenses_manager
        ENDSSH
  
    - name: Copy in VM
      run: |
-      sudo scp -i temp_key.pem -r ./target/* azureuser@${{ steps.get_ip.outputs.VM_IP }}:be_expenses_manager
+      scp -i temp_key.pem -r ./target/* azureuser@${{ steps.get_ip.outputs.VM_IP }}:be_expenses_manager
 
    - name: Run Java aplication on VM
      run: java -jar be_expenses_manager/target/expenses-manager-0.0.1-SNAPSHOT.jar
