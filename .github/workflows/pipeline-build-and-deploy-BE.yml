@@ -31,7 +31,7 @@ jobs:
    - name: SSH into VM
      run: |
        ls
-       ssh -i temp_key.pem -o StrictHostKeyChecking=no azureuser@20.73.89.17 'bash -s' << 'ENDSSH'
+       ssh -i temp_key -o StrictHostKeyChecking=no azureuser@20.73.89.17 'bash -s' << 'ENDSSH'
        sudo apt-get update
        sudo mkdir be_expenses_manager
        sudo cp be_expenses_manager
