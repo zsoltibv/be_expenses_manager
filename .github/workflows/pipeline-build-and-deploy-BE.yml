@@ -5,7 +5,7 @@ on:
     branches:
       - EXP-38_pipeline_build_and_deploy_BE
 jobs:
-  Build:
+  Build-and-Deploy:
    runs-on: ubuntu-latest
    steps:
    - name: Checkout Repository
@@ -27,15 +27,23 @@ jobs:
        
    - name: Build
      run: mvn clean package -DskipTests=true
- #   job: Deploy
- #   displayName: 'Implement on VM Azure'
-  #  steps:
-  #- script: |
-   #  ssh -i D:/devopsp/git/be_expenses_manager/vmback_ssh_key azureuser@20.1252120120320 << EOF
-    #  VM_IP="20.1252120120320"
-     # VM_USER="azureuser"
-     # SSH_PRIVATE_KEY="D:/devopsp/git/vmback_ssh_key.pem"
-     # LOCAL_ARTIFACT_PATH="/path/to/artifact.jar"
-     # REMOTE_DESTINATION="/path/on/vm/"
-     # scp -i "$SSH_PRIVATE_KEY" -r "$LOCAL_ARTIFACT_PATH" "$VM_USER@$VM_IP:$REMOTE_DESTINATION"
-    #displayName: 'Transffer Artefact to VM'
+   
+   - name: 'Connect to Azure VM'
+     env:
+      SSH_PRIVATE_KEY: ${{ secrets.BE_PRIVATE_SSH_KEY }}
+   - name: 'Create a temporary key file'
+     run: |
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" > temp_key.pem
+        chmod 600 temp_key.pem
+
+   - name: SSH into VM
+     run: |
+       ssh -i temp_key.pem -o StrictHostKeyChecking=no azureuser@20.73.89.17 'bash -s' << 'ENDSSH'
+       sudo apt-get update
+       sudo mkdir be_expenses_manager
+       sudo cp be_expenses_manager
+       scp ssh -i D:/devopsp/git/be_expenses_manager/vmback_ssh_key -r D:/devopsp/git/be_expenses_manager/target azureuser@20.73.89.17:/
+       java -jar be_expenses_manager/target
+   - name: Clean up temporary key file
+     run: |
+      rm temp_key.pem
