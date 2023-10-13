@@ -5,7 +5,7 @@ on:
     branches:
       - EXP-38_pipeline_build_and_deploy_BE
 jobs:
-  Build-and-Deploy:
+  Build_and_Deploy:
    runs-on: ubuntu-latest
    steps:
    - name: Checkout Repository
@@ -19,18 +19,10 @@ jobs:
      uses: stCarolas/setup-maven@v4.5
      with:
         maven-version: 3.9.5 #incercam cu versiunea 3.9.5 momentan deoarece 4.0.0 nu e disponibila 
- 
-   - name: Verify Java and Maven
-     run: |
-          java -version
-          mvn -version
        
    - name: Build
      run: mvn clean package -DskipTests=true
    
-   - name: 'Connect to Azure VM'
-     env:
-      SSH_PRIVATE_KEY: ${{ secrets.BE_PRIVATE_SSH_KEY }}
    - name: 'Create a temporary key file'
      run: |
         echo "${{ secrets.SSH_PRIVATE_KEY }}" > temp_key.pem
@@ -42,8 +34,11 @@ jobs:
        sudo apt-get update
        sudo mkdir be_expenses_manager
        sudo cp be_expenses_manager
-       scp ssh -i D:/devopsp/git/be_expenses_manager/vmback_ssh_key -r D:/devopsp/git/be_expenses_manager/target azureuser@20.73.89.17:/
-       java -jar be_expenses_manager/target
+   - name: Copy in VM
+     run: |
+      scp ssh -i D:/devopsp/git/be_expenses_manager/vmback_ssh_key -r D:/devopsp/git/be_expenses_manager/target azureuser@20.73.89.17:/
+   - name: Run Java aplication on VM
+     run: java -jar be_expenses_manager/target/expenses-manager-0.0.1-SNAPSHOT.jar
    - name: Clean up temporary key file
      run: |
       rm temp_key.pem
