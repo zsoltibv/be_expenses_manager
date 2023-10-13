@@ -57,7 +57,7 @@ jobs:
  
    - name: Copy in VM
      run: |
-      scp -i temp_key.pem -r ./target/* azureuser@${{ steps.get_ip.outputs.VM_IP }}:/be_expenses_manager
+      scp -i temp_key.pem -r ./target/* azureuser@${{ steps.get_ip.outputs.VM_IP }}:be_expenses_manager
 
    - name: Run Java aplication on VM
      run: java -jar be_expenses_manager/target/expenses-manager-0.0.1-SNAPSHOT.jar
