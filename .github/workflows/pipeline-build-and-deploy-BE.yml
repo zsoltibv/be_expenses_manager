@@ -63,7 +63,7 @@ jobs:
    - name: Run Java aplication on VM
      run: |
         ssh -i temp_key.pem -o StrictHostKeyChecking=no azureuser@${{ steps.get_ip.outputs.VM_IP }} 'bash -s' << 'ENDSSH'
-        java -jar be_expenses_manager/target/expenses-manager-0.0.1-SNAPSHOT.jar
+        java-jar be_expenses_manager/target/expenses-manager-0.0.1-SNAPSHOT.jar
         ENDSSH
    
    - name: Clean up temporary key file
