@@ -34,6 +34,7 @@ jobs:
        ssh -i temp_key.pem -o StrictHostKeyChecking=no azureuser@20.73.89.17 'bash -s' << 'ENDSSH'
        sudo apt-get update
        sudo mkdir be_expenses_manager
+       ls
        sudo cd be_expenses_manager
        ENDSSH
    - name: Copy in VM
