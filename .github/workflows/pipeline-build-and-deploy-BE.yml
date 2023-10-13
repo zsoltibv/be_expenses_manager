@@ -35,7 +35,7 @@ jobs:
        sudo apt-get update
        sudo mkdir be_expenses_manager
        ls
-       sudo cd be_expenses_manager
+       cd be_expenses_manager
        ENDSSH
    - name: Copy in VM
      run: |
