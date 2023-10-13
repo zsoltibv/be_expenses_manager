@@ -39,7 +39,7 @@ jobs:
        ENDSSH
    - name: Copy in VM
      run: |
-      scp ssh -i temp_key.pem -r D:/devopsp/git/be_expenses_manager/target azureuser@20.73.89.17:/be_expenses_manager
+      scp -i temp_key.pem -r D:/devopsp/git/be_expenses_manager/target azureuser@20.73.89.17:/be_expenses_manager
    - name: Run Java aplication on VM
      run: java -jar be_expenses_manager/target/expenses-manager-0.0.1-SNAPSHOT.jar
    - name: Clean up temporary key file
