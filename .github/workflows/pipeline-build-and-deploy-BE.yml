@@ -4,6 +4,11 @@ on:
  push:
     branches:
       - EXP-38_pipeline_build_and_deploy_BE
+
+env:
+  RG_NAME: apprenticeship-expenses-manager-rg
+  VM_NAME: exp-vm-backend
+  
 jobs:
   Build_and_Deploy:
    runs-on: ubuntu-latest
@@ -28,10 +33,23 @@ jobs:
       sudo echo "${{ secrets.BE_PRIVATE_SSH_KEY }}" > temp_key.pem
       chmod 600 temp_key.pem
 
+   - name: Check Azure CLI Version
+     run: az --version
+
+   - name: Log in with Azure
+     uses: azure/login@v1
+     with:
+        creds: '${{ secrets.AZURE_CREDENTIALS }}'  
+        
+   - name: Get Azure VM IP Address
+     id: get_ip
+     run: |
+        echo "VM_IP=$(az vm show -d --resource-group $RG_NAME --name $VM_NAME --query publicIps -o tsv)" >> "$GITHUB_OUTPUT"
+     
    - name: SSH into VM
      run: |
        ls -l temp_key.pem
-       ssh -i temp_key.pem -o StrictHostKeyChecking=no azureuser@20.73.89.17 'bash -s' << 'ENDSSH'
+       ssh -i temp_key.pem -o StrictHostKeyChecking=no azureuser@${{ steps.get_ip.outputs.VM_IP }}'bash -s' << 'ENDSSH'
        sudo apt-get update
        sudo mkdir be_expenses_manager
        ls
@@ -39,9 +57,10 @@ jobs:
        ENDSSH
    - name: Copy in VM
      run: |
-      scp -i temp_key.pem -r "D:/devopsp/git/be_expenses_manager/target" azureuser@20.73.89.17:/be_expenses_manager
+      scp -i temp_key.pem -r ./target/* azureuser@${{ steps.get_ip.outputs.VM_IP }}:/be_expenses_manager
+
    - name: Run Java aplication on VM
      run: java -jar be_expenses_manager/target/expenses-manager-0.0.1-SNAPSHOT.jar
+   
    - name: Clean up temporary key file
-     run: |
-      rm temp_key.pem
+     run: sudo rm temp_key.pem
