@@ -69,6 +69,7 @@ jobs:
         lsof
         cd be_expenses_manager
         systemctl status mysql
+        systemctl start mysql
         java -jar expenses-manager-0.0.1-SNAPSHOT.jar
         ENDSSH
    
