@@ -1,19 +1,22 @@
 package com.endava.expensesmanager.service.impl;
 
+import com.endava.expensesmanager.exception.CategoryNotFoundException;
+import com.endava.expensesmanager.exception.CurrencyNotFoundException;
+import com.endava.expensesmanager.exception.ExpenseNotFoundException;
+import com.endava.expensesmanager.exception.UserNotFoundException;
 import com.endava.expensesmanager.model.dto.ExpenseDto;
-import com.endava.expensesmanager.model.dto.ExchangeRatesDto;
 import com.endava.expensesmanager.model.entity.Category;
+import com.endava.expensesmanager.model.entity.Currency;
 import com.endava.expensesmanager.model.entity.Expense;
+import com.endava.expensesmanager.model.entity.User;
 import com.endava.expensesmanager.model.mapper.ExpenseMapper;
 import com.endava.expensesmanager.repository.CategoryRepository;
+import com.endava.expensesmanager.repository.CurrencyRepository;
 import com.endava.expensesmanager.repository.ExpenseRepository;
+import com.endava.expensesmanager.repository.UserRepository;
 import com.endava.expensesmanager.service.ExpenseService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClient;
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -22,17 +25,52 @@ import java.util.stream.Stream;
 @Service
 public class ExpenseServiceImpl implements ExpenseService {
     private final ExpenseRepository expenseRepository;
+    private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
+    private final CurrencyRepository currencyRepository;
 
-    public ExpenseServiceImpl(ExpenseRepository expenseRepository,CategoryRepository categoryRepository) {
+    public ExpenseServiceImpl(ExpenseRepository expenseRepository, UserRepository userRepository, CategoryRepository categoryRepository, CurrencyRepository currencyRepository) {
         this.expenseRepository = expenseRepository;
-        this.categoryRepository=categoryRepository;
+        this.userRepository = userRepository;
+        this.categoryRepository = categoryRepository;
+        this.currencyRepository = currencyRepository;
     }
 
 
     @Override
-    public Expense addExpense(ExpenseDto expense) {
-        return expenseRepository.save(ExpenseMapper.toExpense(expense));
+    public void addExpense(ExpenseDto expenseDto) {
+        if (!userRepository.existsById(expenseDto.getUserId())) {
+            throw new UserNotFoundException(expenseDto.getUserId());
+        }
+
+        if (!categoryRepository.existsById(expenseDto.getCategoryId())) {
+            throw new CategoryNotFoundException(expenseDto.getCategoryId());
+        }
+
+        if (!currencyRepository.existsById(expenseDto.getCurrencyId())) {
+            throw new CurrencyNotFoundException(expenseDto.getCurrencyId());
+        }
+
+        expenseRepository.save(ExpenseMapper.toExpense(expenseDto));
+    }
+
+    @Override
+    public void editExpense(Integer expenseId, ExpenseDto expenseDto) {
+        Expense existingExpense = expenseRepository.findById(expenseId)
+                .orElseThrow(() -> new ExpenseNotFoundException(expenseId));
+
+        User user = userRepository.findById(expenseDto.getUserId())
+                .orElseThrow(() -> new UserNotFoundException(expenseDto.getUserId()));
+
+        Category category = categoryRepository.findById(expenseDto.getCategoryId())
+                .orElseThrow(() -> new CategoryNotFoundException(expenseDto.getCategoryId()));
+
+        Currency currency = currencyRepository.findById(expenseDto.getCurrencyId())
+                .orElseThrow(() -> new CurrencyNotFoundException(expenseDto.getCurrencyId()));
+
+        Expense updatedExpense = ExpenseMapper.toUpdatedExpense(existingExpense, expenseDto, user, category, currency);
+
+        expenseRepository.save(updatedExpense);
     }
 
     @Override
@@ -61,15 +99,13 @@ public class ExpenseServiceImpl implements ExpenseService {
     }
 
     public List<ExpenseDto> getExpensesByBeginDateAndEndDate(LocalDate beginDate, LocalDate endDate, Integer userId) {
-         List <Expense>  expenses=expenseRepository.findExpensesBetweenDatesForUser(beginDate.atStartOfDay(), endDate.atStartOfDay(), userId);
-         List<ExpenseDto> expenseDto= new ArrayList<>();
-         for(Expense expense:expenses)
-         {
-             expenseDto.add(ExpenseMapper.toDto(expense));
-         }
-         return expenseDto;
+        List<Expense> expenses = expenseRepository.findExpensesBetweenDatesForUser(beginDate.atStartOfDay(), endDate.atStartOfDay(), userId);
+        List<ExpenseDto> expenseDto = new ArrayList<>();
+        for (Expense expense : expenses) {
+            expenseDto.add(ExpenseMapper.toDto(expense));
+        }
+        return expenseDto;
     }
-
 
 
     public Map<String, BigDecimal> sortExpenses(List<ExpenseDto> expenses) {

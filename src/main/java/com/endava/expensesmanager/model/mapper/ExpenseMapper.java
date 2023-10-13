@@ -6,11 +6,9 @@ import com.endava.expensesmanager.model.entity.Currency;
 import com.endava.expensesmanager.model.entity.Expense;
 import com.endava.expensesmanager.model.entity.User;
 
-import java.util.List;
-
 public class ExpenseMapper {
-    public static Expense toExpense(ExpenseDto expenseDto)
-    {
+
+    public static Expense toExpense(ExpenseDto expenseDto) {
         Expense expense = new Expense();
         expense.setDescription(expenseDto.getDescription());
         expense.setExpenseDate(expenseDto.getExpenseDate());
@@ -30,8 +28,8 @@ public class ExpenseMapper {
 
         return expense;
     }
-    public static ExpenseDto toDto(Expense expense)
-    {
+
+    public static ExpenseDto toDto(Expense expense) {
         ExpenseDto expenseDto = new ExpenseDto();
         expenseDto.setExpenseId(expense.getExpenseId());
         expenseDto.setDescription(expense.getDescription());
@@ -42,5 +40,18 @@ public class ExpenseMapper {
         expenseDto.setCurrencyId(expense.getCurrency().getCurrencyId());
 
         return expenseDto;
+    }
+
+    public static Expense toUpdatedExpense(Expense existingExpense, ExpenseDto expenseDto, User user, Category category, Currency currency) {
+
+        existingExpense.setDescription(expenseDto.getDescription());
+        existingExpense.setAmount(expenseDto.getAmount());
+        existingExpense.setExpenseDate(expenseDto.getExpenseDate());
+
+        existingExpense.setUser(user);
+        existingExpense.setCategory(category);
+        existingExpense.setCurrency(currency);
+
+        return existingExpense;
     }
 }

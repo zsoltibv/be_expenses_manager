@@ -1,5 +1,9 @@
 package com.endava.expensesmanager.controller;
 
+import com.endava.expensesmanager.exception.CategoryNotFoundException;
+import com.endava.expensesmanager.exception.CurrencyNotFoundException;
+import com.endava.expensesmanager.exception.ExpenseNotFoundException;
+import com.endava.expensesmanager.exception.UserNotFoundException;
 import com.endava.expensesmanager.model.dto.ExpenseDto;
 import com.endava.expensesmanager.model.entity.Expense;
 import com.endava.expensesmanager.service.CurrencyService;
@@ -21,16 +25,25 @@ public class ExpenseController {
     private final ExpenseService expenseService;
 
 
+    public ExpenseController(ExpenseService expenseService) {
 
-    public ExpenseController(ExpenseService expenseService, CurrencyService currencyService) {
         this.expenseService = expenseService;
 
     }
 
     @PostMapping()
+
     public ResponseEntity<ExpenseDto> addExpense(@RequestBody @Valid ExpenseDto expenseDto) {
+
         expenseService.addExpense(expenseDto);
         return new ResponseEntity<>(expenseDto, HttpStatus.CREATED);
+    }
+
+    @PutMapping("/{expenseId}")
+    public ResponseEntity<ExpenseDto> editExpense(@PathVariable Integer expenseId,
+                                                  @RequestBody @Valid ExpenseDto expenseDto)  {
+        expenseService.editExpense(expenseId, expenseDto);
+        return new ResponseEntity<>(expenseDto, HttpStatus.OK);
     }
 
     @GetMapping("byUser/{userId}")
