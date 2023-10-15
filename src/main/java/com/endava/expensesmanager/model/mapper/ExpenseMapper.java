@@ -41,6 +41,7 @@ public class ExpenseMapper {
         expenseDto.setUserId(expense.getUser().getUserId());
         expenseDto.setCategoryId(expense.getCategory().getCategoryId());
         expenseDto.setCurrencyId(expense.getCurrency().getCurrencyId());
+        expenseDto.setDocumentId(expense.getDocument().getDocumentId());
 
         return expenseDto;
     }

@@ -19,6 +19,7 @@ import java.util.UUID;
 public class DocumentServiceImpl implements DocumentService {
     @Value("${document.upload.directory}")
     private String uploadDirectory;
+    private final Integer MAX_SIZE_IN_MB = 5;
     private final DocumentRepository documentRepository;
 
     public DocumentServiceImpl(DocumentRepository documentRepository) {
@@ -32,9 +33,9 @@ public class DocumentServiceImpl implements DocumentService {
             throw new InvalidImageFormatException(contentType);
         }
 
-        long maxSize = 5 * 1024 * 1024; // 5MB
+        long maxSize = MAX_SIZE_IN_MB * 1024 * 1024;
         if (file.getSize() > maxSize) {
-            throw new FileSizeExceededException(5);
+            throw new FileSizeExceededException(MAX_SIZE_IN_MB);
         }
 
         Path uploadDirectoryPath = Path.of(uploadDirectory);

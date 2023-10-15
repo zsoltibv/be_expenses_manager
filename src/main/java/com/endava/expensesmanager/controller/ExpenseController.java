@@ -1,11 +1,9 @@
 package com.endava.expensesmanager.controller;
 
 import com.endava.expensesmanager.model.dto.ExpenseDto;
-import com.endava.expensesmanager.service.DocumentService;
 import com.endava.expensesmanager.service.ExpenseService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
