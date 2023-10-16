@@ -54,8 +54,8 @@ jobs:
        sudo apt install -y openjdk-17-jre-headless
        sudo apt install -y maven
        sudo apt install -y mysql-client-core-8.0
-       # sudo mkdir be_expenses_manager
-       #cd be_expenses_manager
+       sudo mkdir be_expenses_manager
+       cd be_expenses_manager
        ls
        sudo chown -R $USER:$USER be_expenses_manager
        ENDSSH
