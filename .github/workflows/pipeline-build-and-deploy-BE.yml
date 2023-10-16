@@ -26,7 +26,8 @@ jobs:
         maven-version: 3.9.5 #incercam cu versiunea 3.9.5 momentan deoarece 4.0.0 nu e disponibila 
        
    - name: Build
-     run: mvn clean package -DskipTests=true
+     run: mvn clean package -DskipTests=true -Dspring.datasource.url=jdbc:mysql://localhost:3306/mydb -Dspring.datasource.username=root -Dspring.datasource.password=root
+
    
    - name: 'Create a temporary key file'
      run: |
