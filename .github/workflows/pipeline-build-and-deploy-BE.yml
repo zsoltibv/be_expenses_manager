@@ -26,7 +26,7 @@ jobs:
         maven-version: 3.9.5 #incercam cu versiunea 3.9.5 momentan deoarece 4.0.0 nu e disponibila 
        
    - name: Build
-     run: mvn clean package -DskipTests=true
+     run: mvn clean package -DskipTests=true -Dspring.datasource.username=${secrets.TF_ADMIN_USERNAME} -Dspring.datasource.password=${secrets.TF_ADMIN_PASSWORD}
 
    
    - name: 'Create a temporary key file'
@@ -50,8 +50,6 @@ jobs:
    - name: SSH into VM
      run: |
        ssh -i temp_key.pem -o StrictHostKeyChecking=no azureuser@${{ steps.get_ip.outputs.VM_IP }} 'bash -s' << 'ENDSSH'
-       echo "spring.datasource.username=${{ secrets.TF_ADMIN_USERNAME }}" >> aplication.properties
-       echo "spring.datasource.password =${{ secrets.TF_ADMIN_PASSWORD }}" >> application.properties 
        sudo apt-get update
        sudo apt install -y openjdk-17-jre-headless
        sudo apt install -y maven
