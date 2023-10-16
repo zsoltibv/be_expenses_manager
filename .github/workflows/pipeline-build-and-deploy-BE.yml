@@ -28,7 +28,7 @@ jobs:
         maven-version: 3.9.5 #incercam cu versiunea 3.9.5 momentan deoarece 4.0.0 nu e disponibila 
        
    - name: Build
-     run: mvn clean package -DskipTests=true -Dspring.datasource.username=${env.DB_USERNAME} -Dspring.datasource.password=${env.DB_PASSWORD}
+     run: mvn clean package -DskipTests=true -Dspring.datasource.username=$DB_USERNAME -Dspring.datasource.password=$DB_PASSWORD
 
    
    - name: 'Create a temporary key file'
