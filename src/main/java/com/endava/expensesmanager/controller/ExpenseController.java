@@ -44,4 +44,10 @@ public class ExpenseController {
         List<ExpenseDto> expenses = expenseService.getExpensesByUserId(userId, startDate, endDate);
         return new ResponseEntity<>(expenses, HttpStatus.OK);
     }
+
+    @PostMapping("/seed")
+    public ResponseEntity<String> seedExpenses(@RequestParam(required = false) Integer nrOfExpenses, @RequestParam(required = false) Integer nrOfDays){
+        expenseService.seedExpenses(nrOfExpenses, nrOfDays);
+        return new ResponseEntity<>("Expenses added successfully!", HttpStatus.OK);
+    }
 }
