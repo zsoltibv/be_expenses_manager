@@ -53,9 +53,9 @@ jobs:
      run: |
        ssh -i temp_key.pem -o StrictHostKeyChecking=no azureuser@${{ steps.get_ip.outputs.VM_IP }} 'bash -s' << 'ENDSSH'
        sudo apt-get update
-       sudo apt install -y openjdk-17-jre-headless
-       sudo apt install -y maven
-       sudo apt install -y mysql-client-core-8.0
+       # sudo apt install -y openjdk-17-jre-headless
+       # sudo apt install -y maven
+       # sudo apt install -y mysql-client-core-8.0
        sudo mkdir be_expenses_manager
        sudo chown -R $USER:$USER be_expenses_manager
        ENDSSH
