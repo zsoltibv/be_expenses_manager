@@ -19,6 +19,7 @@ import com.endava.expensesmanager.service.ExpenseService;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -110,9 +111,11 @@ public class ExpenseServiceImpl implements ExpenseService {
                 .filter(n -> n <= 540)
                 .orElse(90);
 
+        List<Expense> expensesList = new ArrayList<>();
         for (int i = 0; i < nrOfExpenses; i++) {
-            Expense fakeExpense = ExpenseGenerator.generateFakeExpense(nrOfDays);
-            expenseRepository.save(fakeExpense);
+            expensesList.add(ExpenseGenerator.generateFakeExpense(nrOfDays));
         }
+
+        expenseRepository.saveAll(expensesList);
     }
 }
