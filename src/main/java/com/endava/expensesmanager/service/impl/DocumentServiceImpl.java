@@ -4,6 +4,7 @@ import com.endava.expensesmanager.exception.FileSizeExceededException;
 import com.endava.expensesmanager.exception.InvalidImageFormatException;
 import com.endava.expensesmanager.model.entity.Document;
 import com.endava.expensesmanager.repository.DocumentRepository;
+import com.endava.expensesmanager.service.DocumentBlobService;
 import com.endava.expensesmanager.service.DocumentService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -17,13 +18,13 @@ import java.util.UUID;
 
 @Service
 public class DocumentServiceImpl implements DocumentService {
-    @Value("${document.upload.directory}")
-    private String uploadDirectory;
     private final Integer MAX_SIZE_IN_MB = 5;
+    private final DocumentBlobService documentBlobService;
     private final DocumentRepository documentRepository;
 
-    public DocumentServiceImpl(DocumentRepository documentRepository) {
+    public DocumentServiceImpl(DocumentRepository documentRepository, DocumentBlobService documentBlobService) {
         this.documentRepository = documentRepository;
+        this.documentBlobService = documentBlobService;
     }
 
     @Override
@@ -38,12 +39,8 @@ public class DocumentServiceImpl implements DocumentService {
             throw new FileSizeExceededException(MAX_SIZE_IN_MB);
         }
 
-        Path uploadDirectoryPath = Path.of(uploadDirectory);
-        Files.createDirectories(uploadDirectoryPath);
-
         String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
-        Path targetPath = Path.of(uploadDirectory, fileName);
-        Files.copy(file.getInputStream(), targetPath, StandardCopyOption.REPLACE_EXISTING);
+        documentBlobService.storeFile(fileName, file.getInputStream(), file.getSize());
 
         Document document = new Document();
         document.setName(fileName);

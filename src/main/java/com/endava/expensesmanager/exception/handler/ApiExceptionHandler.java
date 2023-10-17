@@ -35,7 +35,7 @@ public class ApiExceptionHandler {
         return new ResponseEntity<>(apiError, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler({ExpenseNotFoundException.class, CategoryNotFoundException.class, CurrencyNotFoundException.class, UserNotFoundException.class})
+    @ExceptionHandler({ExpenseNotFoundException.class, CategoryNotFoundException.class, CurrencyNotFoundException.class, UserNotFoundException.class, FileExistsException.class})
     public ResponseEntity<ApiErrorSingle> handleNotFoundExceptions(Exception e, ServletWebRequest request) {
 
         ApiErrorSingle apiError = new ApiErrorSingle(
