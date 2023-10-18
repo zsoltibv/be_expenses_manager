@@ -76,7 +76,7 @@ public class ExpenseServiceImpl implements ExpenseService {
     }
 
     @Override
-    public List<ExpenseDto> getExpensesByUserId(Integer userId, LocalDate startDate, LocalDate endDate) {
+    public List<Expense> getExpensesByUserId(Integer userId, LocalDate startDate, LocalDate endDate) {
 
         Stream<Expense> expensesStream = expenseRepository.findAll().stream()
                 .filter(expense -> expense.getUser().getUserId().equals(userId));
@@ -95,7 +95,6 @@ public class ExpenseServiceImpl implements ExpenseService {
         }
 
         return expensesStream
-                .map(ExpenseMapper::toDto)
                 .toList();
     }
 
