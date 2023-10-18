@@ -14,11 +14,14 @@ import com.endava.expensesmanager.repository.CategoryRepository;
 import com.endava.expensesmanager.repository.CurrencyRepository;
 import com.endava.expensesmanager.repository.ExpenseRepository;
 import com.endava.expensesmanager.repository.UserRepository;
+import com.endava.expensesmanager.generator.ExpenseGenerator;
 import com.endava.expensesmanager.service.ExpenseService;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 
@@ -94,5 +97,25 @@ public class ExpenseServiceImpl implements ExpenseService {
         return expensesStream
                 .map(ExpenseMapper::toDto)
                 .toList();
+    }
+
+    @Override
+    public void seedExpenses(Integer nrOfExpenses, Integer nrOfDays) {
+        expenseRepository.deleteAll();
+
+        nrOfExpenses = Optional.ofNullable(nrOfExpenses)
+                .filter(n -> n <= 2000)
+                .orElse(200);
+
+        nrOfDays = Optional.ofNullable(nrOfDays)
+                .filter(n -> n <= 540)
+                .orElse(90);
+
+        List<Expense> expensesList = new ArrayList<>();
+        for (int i = 0; i < nrOfExpenses; i++) {
+            expensesList.add(ExpenseGenerator.generateFakeExpense(nrOfDays));
+        }
+
+        expenseRepository.saveAll(expensesList);
     }
 }

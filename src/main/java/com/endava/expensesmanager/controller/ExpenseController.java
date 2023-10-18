@@ -1,9 +1,5 @@
 package com.endava.expensesmanager.controller;
 
-import com.endava.expensesmanager.exception.CategoryNotFoundException;
-import com.endava.expensesmanager.exception.CurrencyNotFoundException;
-import com.endava.expensesmanager.exception.ExpenseNotFoundException;
-import com.endava.expensesmanager.exception.UserNotFoundException;
 import com.endava.expensesmanager.model.dto.ExpenseDto;
 import com.endava.expensesmanager.service.ExpenseService;
 import jakarta.validation.Valid;
@@ -43,5 +39,11 @@ public class ExpenseController {
 
         List<ExpenseDto> expenses = expenseService.getExpensesByUserId(userId, startDate, endDate);
         return new ResponseEntity<>(expenses, HttpStatus.OK);
+    }
+
+    @PostMapping("/seed")
+    public ResponseEntity<String> seedExpenses(@RequestParam(required = false) Integer nrOfExpenses, @RequestParam(required = false) Integer nrOfDays){
+        expenseService.seedExpenses(nrOfExpenses, nrOfDays);
+        return new ResponseEntity<>("Expenses added successfully!", HttpStatus.CREATED);
     }
 }
