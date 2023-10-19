@@ -15,6 +15,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.temporal.TemporalAdjusters;
 import java.time.temporal.WeekFields;
 import java.util.*;
@@ -61,7 +62,7 @@ public class ExpenseServiceImpl implements ExpenseService {
     }
 
     public List<Expense> getExpensesByBeginDateAndEndDate(LocalDate beginDate, LocalDate endDate, Integer userId) {
-        return expenseRepository.findExpensesBetweenDatesForUser(beginDate.atStartOfDay(), endDate.atStartOfDay(), userId);
+        return expenseRepository.findExpensesBetweenDatesForUser(beginDate.atStartOfDay(), endDate.atStartOfDay().plusHours(24).minusSeconds(1), userId);
     }
 
     @Override
@@ -79,8 +80,27 @@ public class ExpenseServiceImpl implements ExpenseService {
     public List<List<Expense>> getExpensesByBeginDateAndEndDateSortedBy(LocalDate beginDate, LocalDate endDate, Integer userId)
     { WeekFields weekFields = WeekFields.of(Locale.getDefault());
        List< List<Expense>> expenseList=new ArrayList<>();
+        if (beginDate.compareTo(endDate) == 0) {
+            List<Expense> dayExpenses = this.getExpensesByBeginDateAndEndDate(beginDate, endDate, userId);
+            System.out.println(dayExpenses.size());
+            LocalDateTime startOfDay = beginDate.atStartOfDay();
+            LocalDateTime endOfDay = beginDate.plusDays(1).atStartOfDay();
 
-        if(beginDate.get(weekFields.weekOfWeekBasedYear())==endDate.get(weekFields.weekOfWeekBasedYear()))
+            while (startOfDay.isBefore(endOfDay)) {
+
+                List<Expense> expenseByHour = new ArrayList<>();
+                for (Expense expense : dayExpenses) {
+                    if (expense.getExpenseDate().compareTo(startOfDay)>=0 && expense.getExpenseDate().isBefore(startOfDay.plusHours(1))) {
+                        expenseByHour.add(expense);
+                    }
+                }
+                expenseList.add(expenseByHour);
+                startOfDay = startOfDay.plusHours(1);
+            }
+            return expenseList;
+        }
+
+        else if(beginDate.get(weekFields.weekOfWeekBasedYear())==endDate.get(weekFields.weekOfWeekBasedYear()))
         {  LocalDate increment = LocalDate.of(beginDate.getYear(), beginDate.getMonth(), beginDate.getDayOfMonth());
             while(increment.compareTo(endDate)<=0)
             {expenseList.add(this.getExpensesByBeginDateAndEndDate(increment,increment,userId));
