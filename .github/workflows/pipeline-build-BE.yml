@@ -1,9 +1,6 @@
 name: Build BE
 
-on: 
- push:
-  branches:
-   EXP-67_pipeline_build_BE
+on: workflow_dispatch 
 
 env:
   RG_NAME: apprenticeship-expenses-manager-rg
