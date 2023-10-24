@@ -32,7 +32,6 @@ public class ExpenseController {
     }
 
     @PostMapping()
-
     public ResponseEntity<ExpenseDto> addExpense(@RequestBody @Valid ExpenseDto expenseDto) {
 
         expenseService.addExpense(expenseDto);

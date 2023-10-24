@@ -18,6 +18,7 @@ import com.endava.expensesmanager.service.ExpenseService;
 import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -98,8 +99,8 @@ public class ExpenseServiceImpl implements ExpenseService {
 
     }
 
-    public List<ExpenseDto> getExpensesByBeginDateAndEndDate(LocalDate beginDate, LocalDate endDate, Integer userId) {
-        List<Expense> expenses = expenseRepository.findExpensesBetweenDatesForUser(beginDate.atStartOfDay(), endDate.atStartOfDay(), userId);
+    public List<ExpenseDto> getExpensesByBeginDateAndEndDate(LocalDateTime beginDate, LocalDateTime endDate, Integer userId) {
+        List<Expense> expenses = expenseRepository.findExpensesBetweenDatesForUser(beginDate, endDate, userId);
         List<ExpenseDto> expenseDto = new ArrayList<>();
         for (Expense expense : expenses) {
             expenseDto.add(ExpenseMapper.toDto(expense));

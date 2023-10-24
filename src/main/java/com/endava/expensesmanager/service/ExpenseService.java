@@ -3,6 +3,7 @@ package com.endava.expensesmanager.service;
 import com.endava.expensesmanager.model.dto.ExpenseDto;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -14,7 +15,7 @@ public interface ExpenseService {
 
     List<ExpenseDto> getExpensesByUserId(Integer userId, LocalDate startDate, LocalDate endDate);
 
-    List<ExpenseDto> getExpensesByBeginDateAndEndDate(LocalDate beginDate, LocalDate endDate, Integer userId);
+    List<ExpenseDto> getExpensesByBeginDateAndEndDate(LocalDateTime beginDate, LocalDateTime endDate, Integer userId);
 
     Map<String, BigDecimal> sortExpenses(List<ExpenseDto> expenses);
 
