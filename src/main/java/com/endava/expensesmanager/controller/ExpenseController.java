@@ -5,13 +5,16 @@ import com.endava.expensesmanager.exception.CurrencyNotFoundException;
 import com.endava.expensesmanager.exception.ExpenseNotFoundException;
 import com.endava.expensesmanager.exception.UserNotFoundException;
 import com.endava.expensesmanager.model.dto.ExpenseDto;
+import com.endava.expensesmanager.model.entity.Category;
 import com.endava.expensesmanager.service.ExpenseService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -43,5 +46,13 @@ public class ExpenseController {
 
         List<ExpenseDto> expenses = expenseService.getExpensesByUserId(userId, startDate, endDate);
         return new ResponseEntity<>(expenses, HttpStatus.OK);
+    }
+
+    @PostMapping("/extractExpensesFromPdf/{userId}")
+    public ResponseEntity<List<ExpenseDto>> extractExpensesFromPdf(@PathVariable Integer userId, @RequestPart(value = "file") MultipartFile pdfFile) throws IOException {
+
+        expenseService.extractExpensesFromPdf(userId, pdfFile);
+        return new ResponseEntity<>(HttpStatus.CREATED);
+
     }
 }

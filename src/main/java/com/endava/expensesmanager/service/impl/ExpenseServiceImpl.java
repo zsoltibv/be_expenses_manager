@@ -14,9 +14,20 @@ import com.endava.expensesmanager.repository.CategoryRepository;
 import com.endava.expensesmanager.repository.CurrencyRepository;
 import com.endava.expensesmanager.repository.ExpenseRepository;
 import com.endava.expensesmanager.repository.UserRepository;
+import com.endava.expensesmanager.service.BankStatementParser;
 import com.endava.expensesmanager.service.ExpenseService;
+import org.apache.pdfbox.pdmodel.PDDocument;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+import technology.tabula.*;
+import technology.tabula.extractors.SpreadsheetExtractionAlgorithm;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Stream;
@@ -94,5 +105,34 @@ public class ExpenseServiceImpl implements ExpenseService {
         return expensesStream
                 .map(ExpenseMapper::toDto)
                 .toList();
+    }
+    @Override
+    public void extractExpensesFromPdf(Integer userId, MultipartFile pdfFile) throws IOException {
+
+        if(!userRepository.existsById(userId)) {
+            throw new UserNotFoundException(userId);
+        }
+
+        Category category = categoryRepository.findAll().stream()
+                .filter(cat -> "Bank Statement".equalsIgnoreCase(cat.getDescription()))
+                .findFirst()
+                .orElse(null);
+
+        Currency currency = currencyRepository.findAll().stream()
+                .filter(cur -> "RON".equalsIgnoreCase(cur.getCode()))
+                .findFirst()
+                .orElse(null);
+
+        InputStream pdfInputStream = pdfFile.getInputStream();
+
+        List<Expense> expensesList = new BankStatementParserBRD().parseBankStatement(pdfInputStream);
+
+        expensesList.stream()
+                .forEach(expense -> {
+                    expense.setUser(userRepository.findById(userId).get());
+                    expense.setCategory(category);
+                    expense.setCurrency(currency);
+                    expenseRepository.save(expense);
+                });
     }
 }
