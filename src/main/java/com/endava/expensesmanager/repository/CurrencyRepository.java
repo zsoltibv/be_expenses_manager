@@ -1,3 +1,4 @@
+
 package com.endava.expensesmanager.repository;
 
 import com.endava.expensesmanager.model.entity.Currency;
@@ -10,4 +11,5 @@ public interface CurrencyRepository extends JpaRepository<Currency,Integer> {
     Currency findByCode(@Param("code") String code);
 
 }
+
 

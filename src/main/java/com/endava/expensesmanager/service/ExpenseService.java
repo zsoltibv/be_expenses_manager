@@ -9,14 +9,16 @@ import java.util.Map;
 
 public interface ExpenseService {
 
-    void addExpense(ExpenseDto expenseDto);
+    void addExpense(ExpenseDto expenseDto); 
 
-    void editExpense(Integer expenseId, ExpenseDto expenseDto);
+    void editExpense(Integer expenseId, ExpenseDto expenseDto); 
 
-    List<ExpenseDto> getExpensesByUserId(Integer userId, LocalDate startDate, LocalDate endDate);
+    List<ExpenseDto> getExpensesByUserId(Integer userId, LocalDate startDate, LocalDate endDate); 
 
     List<ExpenseDto> getExpensesByBeginDateAndEndDate(LocalDateTime beginDate, LocalDateTime endDate, Integer userId);
 
     Map<String, BigDecimal> sortExpenses(List<ExpenseDto> expenses);
+  
+        void seedExpenses(Integer nrOfExpenses, Integer nrOfDays);
 
 }
