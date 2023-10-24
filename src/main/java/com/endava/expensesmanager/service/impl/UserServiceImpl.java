@@ -12,23 +12,25 @@ import java.time.LocalDateTime;
 
 @Service
 public class UserServiceImpl implements UserService {
-        private final UserRepository userRepository;
-        public  UserServiceImpl(UserRepository userRepository){
-            this.userRepository = userRepository;
-        }
-        @Override
-        public UserDto getOrCreateUserByName(String name) {
+    private final UserRepository userRepository;
 
-            User existingUser = userRepository.findByName(name);
+    public UserServiceImpl(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
-            if (existingUser != null) {
-                return UserMapper.toDto(existingUser);
-            } else {
-                User newUser = new User();
-                newUser.setName(name);
-                newUser.setCreatedAt(LocalDateTime.now());
-                userRepository.save(newUser);
-                return UserMapper.toDto(newUser);
-            }
+    @Override
+    public UserDto getOrCreateUserByName(String name) {
+
+        User existingUser = userRepository.findByName(name);
+
+        if (existingUser != null) {
+            return UserMapper.toDto(existingUser);
+        } else {
+            User newUser = new User();
+            newUser.setName(name);
+            newUser.setCreatedAt(LocalDateTime.now());
+            userRepository.save(newUser);
+            return UserMapper.toDto(newUser);
         }
+    }
 }
