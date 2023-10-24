@@ -122,14 +122,14 @@ public class ExpenseServiceImpl implements ExpenseService {
     }
 
     @Override
-    public ResponseEntity<?> deleteExpenseById(Integer expenseId) {
+    public void  deleteExpenseById(Integer expenseId) {
         Optional<Expense> expenseOptional=expenseRepository.findById(expenseId);
         if(expenseOptional.isPresent())
         {
             expenseRepository.deleteById(expenseId);
-            return new ResponseEntity<>("The expense Has been deleted", HttpStatus.OK);
+
         }
-        return new ResponseEntity<>("The expense does not exist",HttpStatus.NOT_FOUND);
+        throw new ExpenseNotFoundException(expenseId);
 
     }
 }

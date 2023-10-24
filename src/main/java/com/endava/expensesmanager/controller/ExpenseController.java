@@ -7,7 +7,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
 import java.time.LocalDate;
 import java.util.List;
 
@@ -22,14 +21,13 @@ public class ExpenseController {
     }
 
     @PostMapping()
-    public ResponseEntity<ExpenseDto> addExpense(@RequestBody @Valid ExpenseDto expenseDto)  {
+    public ResponseEntity<ExpenseDto> addExpense(@RequestBody @Valid ExpenseDto expenseDto) {
         expenseService.addExpense(expenseDto);
         return new ResponseEntity<>(expenseDto, HttpStatus.CREATED);
     }
 
     @PutMapping("/{expenseId}")
-    public ResponseEntity<ExpenseDto> editExpense(@PathVariable Integer expenseId,
-                                                  @RequestBody @Valid ExpenseDto expenseDto)  {
+    public ResponseEntity<ExpenseDto> editExpense(@PathVariable Integer expenseId, @RequestBody @Valid ExpenseDto expenseDto) {
         expenseService.editExpense(expenseId, expenseDto);
         return new ResponseEntity<>(expenseDto, HttpStatus.OK);
     }
@@ -42,14 +40,14 @@ public class ExpenseController {
     }
 
     @PostMapping("/seed")
-    public ResponseEntity<String> seedExpenses(@RequestParam(required = false) Integer nrOfExpenses, @RequestParam(required = false) Integer nrOfDays){
+    public ResponseEntity<String> seedExpenses(@RequestParam(required = false) Integer nrOfExpenses, @RequestParam(required = false) Integer nrOfDays) {
         expenseService.seedExpenses(nrOfExpenses, nrOfDays);
         return new ResponseEntity<>("Expenses added successfully!", HttpStatus.CREATED);
     }
 
     @DeleteMapping("{expenseId}")
-    public ResponseEntity<?> deleteExpenseById(@PathVariable Integer expenseId)
-    {
-        return expenseService.deleteExpenseById(expenseId);
+    public ResponseEntity<Void> deleteExpenseById(@PathVariable Integer expenseId) {
+        expenseService.deleteExpenseById(expenseId);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
