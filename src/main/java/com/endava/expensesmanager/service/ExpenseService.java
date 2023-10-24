@@ -9,7 +9,9 @@ import java.util.List;
 
 
 public interface ExpenseService {
-        Expense addExpense(ExpenseDto expense);
+        void addExpense(ExpenseDto expenseDto);
+        void editExpense(Integer expenseId, ExpenseDto expenseDto);
         List<ExpenseDto> getExpensesByUserId(Integer userId, LocalDate startDate, LocalDate endDate);
+        void seedExpenses(Integer nrOfExpenses, Integer nrOfDays);
         ResponseEntity<?> deleteExpenseById(Integer expenseId);
 }

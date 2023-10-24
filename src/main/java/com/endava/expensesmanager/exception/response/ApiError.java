@@ -1,4 +1,4 @@
-package com.endava.expensesmanager.exception;
+package com.endava.expensesmanager.exception.response;
 
 import java.time.LocalDateTime;
 import java.util.Map;
