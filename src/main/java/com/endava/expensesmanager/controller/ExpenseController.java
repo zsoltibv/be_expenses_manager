@@ -18,11 +18,8 @@ import java.util.List;
 public class ExpenseController {
     private final ExpenseService expenseService;
 
-
     public ExpenseController(ExpenseService expenseService) {
-
         this.expenseService = expenseService;
-
     }
 
     @PostMapping()
@@ -41,7 +38,6 @@ public class ExpenseController {
 
     @GetMapping("byUser/{userId}")
     public ResponseEntity<List<ExpenseDto>> getExpensesByUserId(@PathVariable Integer userId, @RequestParam(required = false) LocalDate startDate, @RequestParam(required = false) LocalDate endDate) {
-
         List<ExpenseDto> expenses = expenseService.getExpensesByUserId(userId, startDate, endDate);
         return new ResponseEntity<>(expenses, HttpStatus.OK);
     }
