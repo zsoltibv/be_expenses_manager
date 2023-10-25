@@ -4,6 +4,7 @@ import com.endava.expensesmanager.exception.CategoryNotFoundException;
 import com.endava.expensesmanager.exception.CurrencyNotFoundException;
 import com.endava.expensesmanager.exception.ExpenseNotFoundException;
 import com.endava.expensesmanager.exception.UserNotFoundException;
+import com.endava.expensesmanager.generator.ExpenseGenerator;
 import com.endava.expensesmanager.model.dto.ExpenseDto;
 import com.endava.expensesmanager.model.entity.Category;
 import com.endava.expensesmanager.model.entity.Currency;
@@ -16,17 +17,12 @@ import com.endava.expensesmanager.repository.ExpenseRepository;
 import com.endava.expensesmanager.repository.UserRepository;
 import com.endava.expensesmanager.service.ExpenseService;
 import org.springframework.stereotype.Service;
+
 import java.math.BigDecimal;
-
-import java.math.RoundingMode;
-import java.time.DayOfWeek;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-
 import java.time.temporal.TemporalAdjusters;
 import java.time.temporal.WeekFields;
-
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -126,43 +122,59 @@ public class ExpenseServiceImpl implements ExpenseService {
                         Collectors.mapping(ExpenseDto::getAmount, Collectors.reducing(BigDecimal.ZERO, BigDecimal::add))
                 ));
     }
-    public List<List<ExpenseDto>> getExpensesByBeginDateAndEndDateSortedBy(LocalDateTime beginDate, LocalDateTime endDate, Integer userId)
-    { WeekFields weekFields = WeekFields.of(Locale.getDefault());
-       List< List<ExpenseDto>> expenseList=new ArrayList<>();
-       LocalDate beginDateLocalDate=beginDate.toLocalDate();
-       LocalDate endDateLocalDate=endDate.toLocalDate();
+
+    public List<List<ExpenseDto>> getExpensesByBeginDateAndEndDateSortedBy(LocalDateTime beginDate, LocalDateTime endDate, Integer userId) {
+        WeekFields weekFields = WeekFields.of(Locale.getDefault());
+        List<List<ExpenseDto>> expenseList = new ArrayList<>();
+        LocalDate beginDateLocalDate = beginDate.toLocalDate();
+        LocalDate endDateLocalDate = endDate.toLocalDate();
         if (beginDateLocalDate.compareTo(endDateLocalDate) == 0) {
-            while(beginDate.isBefore(endDate))
-            { expenseList.add(this.getExpensesByBeginDateAndEndDate(beginDate,beginDate.plusHours(1).minusSeconds(1),userId));
-                beginDate=beginDate.plusHours(1);
+            while (beginDate.isBefore(endDate)) {
+                expenseList.add(this.getExpensesByBeginDateAndEndDate(beginDate, beginDate.plusHours(1).minusSeconds(1), userId));
+                beginDate = beginDate.plusHours(1);
             }
 
-        }
-
-        else if(beginDate.getYear() == endDate.getYear() && beginDate.getMonth() == endDate.getMonth())
-        {
+        } else if (beginDate.getYear() == endDate.getYear() && beginDate.getMonth() == endDate.getMonth()) {
             LocalDate increment = LocalDate.of(beginDate.getYear(), beginDate.getMonth(), beginDate.getDayOfMonth());
-            while(increment.compareTo(endDate.toLocalDate())<=0)
-            {expenseList.add(this.getExpensesByBeginDateAndEndDate(increment.atStartOfDay(),increment.atStartOfDay().plusHours(24).minusSeconds(1),userId));
-               increment=increment.plusDays(1);
+            while (increment.compareTo(endDate.toLocalDate()) <= 0) {
+                expenseList.add(this.getExpensesByBeginDateAndEndDate(increment.atStartOfDay(), increment.atStartOfDay().plusHours(24).minusSeconds(1), userId));
+                increment = increment.plusDays(1);
             }
 
-        }
-
-       else{
+        } else {
             LocalDate increment = LocalDate.of(beginDate.getYear(), beginDate.getMonth(), beginDate.getDayOfMonth());
-            while (endDate.toLocalDate().compareTo(increment.with(TemporalAdjusters.firstDayOfMonth()))>=0) {
+            while (endDate.toLocalDate().compareTo(increment.with(TemporalAdjusters.firstDayOfMonth())) >= 0) {
                 LocalDate beginDateMonth = increment.with(TemporalAdjusters.firstDayOfMonth());
                 LocalDate endDateMonth = increment.with(TemporalAdjusters.lastDayOfMonth());
                 if (beginDateMonth.isBefore(beginDate.toLocalDate()))
                     beginDateMonth = LocalDate.of(beginDate.getYear(), beginDate.getMonth(), beginDate.getDayOfMonth());
                 if (endDateMonth.isAfter(endDate.toLocalDate()))
                     endDateMonth = LocalDate.of(endDate.getYear(), endDate.getMonth(), endDate.getDayOfMonth());
-                expenseList.add(this.getExpensesByBeginDateAndEndDate(beginDateMonth.atStartOfDay(),endDateMonth.atStartOfDay().plusHours(24).minusSeconds(1),userId));
-                increment=increment.plusMonths(1);
+                expenseList.add(this.getExpensesByBeginDateAndEndDate(beginDateMonth.atStartOfDay(), endDateMonth.atStartOfDay().plusHours(24).minusSeconds(1), userId));
+                increment = increment.plusMonths(1);
             }
         }
         return expenseList;
 
+    }
+
+    @Override
+    public void seedExpenses(Integer nrOfExpenses, Integer nrOfDays) {
+        expenseRepository.deleteAll();
+
+        nrOfExpenses = Optional.ofNullable(nrOfExpenses)
+                .filter(n -> n <= 2000)
+                .orElse(200);
+
+        nrOfDays = Optional.ofNullable(nrOfDays)
+                .filter(n -> n <= 540)
+                .orElse(90);
+
+        List<Expense> expensesList = new ArrayList<>();
+        for (int i = 0; i < nrOfExpenses; i++) {
+            expensesList.add(ExpenseGenerator.generateFakeExpense(nrOfDays));
+        }
+
+        expenseRepository.saveAll(expensesList);
     }
 }
