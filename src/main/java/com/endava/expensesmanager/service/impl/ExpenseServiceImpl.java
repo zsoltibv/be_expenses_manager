@@ -139,7 +139,7 @@ public class ExpenseServiceImpl implements ExpenseService {
 
         }
 
-        else if(beginDate.get(weekFields.weekOfWeekBasedYear())==endDate.get(weekFields.weekOfWeekBasedYear()))
+        else if(beginDate.getYear() == endDate.getYear() && beginDate.getMonth() == endDate.getMonth())
         {
             LocalDate increment = LocalDate.of(beginDate.getYear(), beginDate.getMonth(), beginDate.getDayOfMonth());
             while(increment.compareTo(endDate.toLocalDate())<=0)
@@ -148,19 +148,7 @@ public class ExpenseServiceImpl implements ExpenseService {
             }
 
         }
-       else if(beginDate.getYear() == endDate.getYear() && beginDate.getMonth() == endDate.getMonth())
-        { LocalDate increment = LocalDate.of(beginDate.getYear(), beginDate.getMonth(), beginDate.getDayOfMonth());
-            while (endDate.toLocalDate().compareTo(increment.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY)))>=0) {
-                LocalDate beginDateWeek = increment.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
-                LocalDate endDateWeek = increment.with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY));
-                if (beginDateWeek.isBefore(beginDate.toLocalDate()))
-                    beginDateWeek = LocalDate.of(beginDate.getYear(), beginDate.getMonth(), beginDate.getDayOfMonth());
-                if (endDateWeek.isAfter(endDate.toLocalDate()))
-                    endDateWeek = LocalDate.of(endDate.getYear(), endDate.getMonth(), endDate.getDayOfMonth());
-                expenseList.add(this.getExpensesByBeginDateAndEndDate(beginDateWeek.atStartOfDay(),endDateWeek.atStartOfDay().plusHours(24).minusSeconds(1),userId));
-                increment=increment.plusWeeks(1);
-            }
-        }
+
        else{
             LocalDate increment = LocalDate.of(beginDate.getYear(), beginDate.getMonth(), beginDate.getDayOfMonth());
             while (endDate.toLocalDate().compareTo(increment.with(TemporalAdjusters.firstDayOfMonth()))>=0) {
