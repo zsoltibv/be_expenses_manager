@@ -2,6 +2,7 @@ package com.endava.expensesmanager.service.impl;
 
 import com.endava.expensesmanager.exception.ExpenseNotFoundException;
 import com.endava.expensesmanager.exception.UserNotFoundException;
+import com.endava.expensesmanager.generator.ExpenseGenerator;
 import com.endava.expensesmanager.model.dto.ExpenseDto;
 import com.endava.expensesmanager.model.entity.Expense;
 import com.endava.expensesmanager.model.entity.User;
@@ -10,25 +11,31 @@ import com.endava.expensesmanager.repository.CategoryRepository;
 import com.endava.expensesmanager.repository.CurrencyRepository;
 import com.endava.expensesmanager.repository.ExpenseRepository;
 import com.endava.expensesmanager.repository.UserRepository;
-import com.endava.expensesmanager.generator.ExpenseGenerator;
 import com.endava.expensesmanager.service.ExpenseService;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
 
 @Service
 public class ExpenseServiceImpl implements ExpenseService {
     private final ExpenseRepository expenseRepository;
     private final UserRepository userRepository;
+    private final CategoryRepository categoryRepository;
+    private final CurrencyRepository currencyRepository;
 
-    public ExpenseServiceImpl(ExpenseRepository expenseRepository, UserRepository userRepository, CategoryRepository categoryRepository, CurrencyRepository currencyRepository) {
+    public ExpenseServiceImpl(ExpenseRepository expenseRepository, UserRepository userRepository, CategoryRepository categoryRepository, CurrencyRepository currencyRepository, CategoryRepository categoryRepository1, CurrencyRepository currencyRepository1) {
         this.expenseRepository = expenseRepository;
         this.userRepository = userRepository;
+        this.categoryRepository = categoryRepository1;
+        this.currencyRepository = currencyRepository1;
     }
 
     @Override
@@ -75,6 +82,25 @@ public class ExpenseServiceImpl implements ExpenseService {
         return expensesStream
                 .map(ExpenseMapper::toDto)
                 .toList();
+
+    }
+
+    public List<ExpenseDto> getExpensesByBeginDateAndEndDate(LocalDateTime beginDate, LocalDateTime endDate, Integer userId) {
+        List<Expense> expenses = expenseRepository.findExpensesBetweenDatesForUser(beginDate, endDate, userId);
+        List<ExpenseDto> expenseDto = new ArrayList<>();
+        for (Expense expense : expenses) {
+            expenseDto.add(ExpenseMapper.toDto(expense));
+        }
+        return expenseDto;
+    }
+
+
+    public Map<String, BigDecimal> sortExpenses(List<ExpenseDto> expenses) {
+        return expenses.stream()
+                .collect(Collectors.groupingBy(
+                        expense -> categoryRepository.findById(expense.getCategory().getCategoryId()).get().getDescription(),
+                        Collectors.mapping(ExpenseDto::getAmount, Collectors.reducing(BigDecimal.ZERO, BigDecimal::add))
+                ));
     }
 
     @Override
@@ -91,7 +117,11 @@ public class ExpenseServiceImpl implements ExpenseService {
 
         List<Expense> expensesList = new ArrayList<>();
         for (int i = 0; i < nrOfExpenses; i++) {
-            expensesList.add(ExpenseGenerator.generateFakeExpense(nrOfDays));
+            expensesList.add(ExpenseGenerator.generateFakeExpense(
+                    nrOfDays,
+                    categoryRepository.findAll(),
+                    currencyRepository.findAll()
+            ));
         }
 
         expenseRepository.saveAll(expensesList);

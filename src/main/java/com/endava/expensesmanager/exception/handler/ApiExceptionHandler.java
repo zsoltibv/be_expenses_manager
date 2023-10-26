@@ -35,6 +35,18 @@ public class ApiExceptionHandler {
         );
         return new ResponseEntity<>(apiError, HttpStatus.BAD_REQUEST);
     }
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ApiErrorSingle> handleMethodArgumentNotValidException(IllegalArgumentException e,
+                                                                          ServletWebRequest request) {
+        ApiErrorSingle apiError = new ApiErrorSingle(
+                request.getRequest().getRequestURI(),
+                e.getMessage(),
+                HttpStatus.BAD_REQUEST.value(),
+                LocalDateTime.now()
+        );
+
+        return new ResponseEntity<>(apiError, HttpStatus.BAD_REQUEST);
+    }
 
     @ExceptionHandler({ExpenseNotFoundException.class, UserNotFoundException.class})
     public ResponseEntity<ApiErrorSingle> handleNotFoundExceptions(Exception e, ServletWebRequest request) {
