@@ -1,15 +1,12 @@
 package com.endava.expensesmanager.model.dto;
 
-import com.endava.expensesmanager.model.entity.Category;
-import com.endava.expensesmanager.model.entity.Currency;
-import com.endava.expensesmanager.model.entity.User;
 import jakarta.validation.constraints.*;
 import lombok.Data;
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
+
 public class ExpenseDto {
     private Integer expenseId;
     @NotBlank(message = "Description is required")

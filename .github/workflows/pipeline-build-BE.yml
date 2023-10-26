@@ -1,0 +1,33 @@
+name: Build BE
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+    - main
+
+env:
+  RG_NAME: apprenticeship-expenses-manager-rg
+  VM_NAME: exp-vm-backend
+  DB_USERNAME: ${{ secrets.TF_ADMIN_USERNAME }}
+  DB_PASSWORD: ${{ secrets.TF_ADMIN_PASSWORD }}
+  DB_URL: ${{ secrets.TF_MYSQL_JDBC }}
+  
+jobs:
+  Build:
+   runs-on: ubuntu-latest
+   steps:
+   - name: Checkout Repository
+     uses: actions/checkout@v2
+   - name: Set up Java
+     uses: actions/setup-java@v2
+     with:
+      distribution: 'adopt'
+      java-version: '17'
+   - name: Install Maven
+     uses: stCarolas/setup-maven@v4.5
+     with:
+      maven-version: 3.9.5 #incercam cu versiunea 3.9.5 momentan deoarece 4.0.0 nu e disponibila 
+       
+   - name: Build
+     run: mvn clean package -DskipTests=true -Dspring.datasource.username=$DB_USERNAME -Dspring.datasource.password=$DB_PASSWORD -Dspring.datasource.url=$DB_URL

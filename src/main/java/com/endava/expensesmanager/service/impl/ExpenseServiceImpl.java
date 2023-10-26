@@ -1,6 +1,10 @@
 package com.endava.expensesmanager.service.impl;
 
-import com.endava.expensesmanager.exception.*;
+import com.endava.expensesmanager.exception.CategoryNotFoundException;
+import com.endava.expensesmanager.exception.CurrencyNotFoundException;
+import com.endava.expensesmanager.exception.ExpenseNotFoundException;
+import com.endava.expensesmanager.exception.UserNotFoundException;
+import com.endava.expensesmanager.generator.ExpenseGenerator;
 import com.endava.expensesmanager.model.dto.ExpenseDto;
 import com.endava.expensesmanager.model.entity.Category;
 import com.endava.expensesmanager.model.entity.Currency;
@@ -17,10 +21,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
 
 @Service
 public class ExpenseServiceImpl implements ExpenseService {
@@ -38,8 +47,9 @@ public class ExpenseServiceImpl implements ExpenseService {
         this.documentService = documentService;
     }
 
+
     @Override
-    public void addExpense(ExpenseDto expenseDto, MultipartFile file) throws IOException{
+    public void addExpense(ExpenseDto expenseDto, MultipartFile file) throws IOException {
         if (!userRepository.existsById(expenseDto.getUserId())) {
             throw new UserNotFoundException(expenseDto.getUserId());
         }
@@ -101,5 +111,44 @@ public class ExpenseServiceImpl implements ExpenseService {
         return expensesStream
                 .map(ExpenseMapper::toDto)
                 .toList();
+
+    }
+
+    public List<ExpenseDto> getExpensesByBeginDateAndEndDate(LocalDateTime beginDate, LocalDateTime endDate, Integer userId) {
+        List<Expense> expenses = expenseRepository.findExpensesBetweenDatesForUser(beginDate, endDate, userId);
+        List<ExpenseDto> expenseDto = new ArrayList<>();
+        for (Expense expense : expenses) {
+            expenseDto.add(ExpenseMapper.toDto(expense));
+        }
+        return expenseDto;
+    }
+
+
+    public Map<String, BigDecimal> sortExpenses(List<ExpenseDto> expenses) {
+        return expenses.stream()
+                .collect(Collectors.groupingBy(
+                        expense -> categoryRepository.findById(expense.getCategoryId()).get().getDescription(),
+                        Collectors.mapping(ExpenseDto::getAmount, Collectors.reducing(BigDecimal.ZERO, BigDecimal::add))
+                ));
+    }
+
+    @Override
+    public void seedExpenses(Integer nrOfExpenses, Integer nrOfDays) {
+        expenseRepository.deleteAll();
+
+        nrOfExpenses = Optional.ofNullable(nrOfExpenses)
+                .filter(n -> n <= 2000)
+                .orElse(200);
+
+        nrOfDays = Optional.ofNullable(nrOfDays)
+                .filter(n -> n <= 540)
+                .orElse(90);
+
+        List<Expense> expensesList = new ArrayList<>();
+        for (int i = 0; i < nrOfExpenses; i++) {
+            expensesList.add(ExpenseGenerator.generateFakeExpense(nrOfDays));
+        }
+
+        expenseRepository.saveAll(expensesList);
     }
 }

@@ -2,6 +2,10 @@ package com.endava.expensesmanager.model.mapper;
 
 import com.endava.expensesmanager.model.dto.ExpenseDto;
 import com.endava.expensesmanager.model.entity.*;
+import com.endava.expensesmanager.model.entity.Category;
+import com.endava.expensesmanager.model.entity.Currency;
+import com.endava.expensesmanager.model.entity.Expense;
+import com.endava.expensesmanager.model.entity.User;
 
 public class ExpenseMapper {
 
