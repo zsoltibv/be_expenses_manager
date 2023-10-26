@@ -5,7 +5,6 @@ on:
   branches: 
    EXP-test-pipeline-build-and-deploy-BE
    
-
 env:
   RG_NAME: apprenticeship-expenses-manager-rg
   VM_NAME: exp-vm-backend
