@@ -1,20 +1,10 @@
 package com.endava.expensesmanager.model.mapper;
 
-import com.endava.expensesmanager.exception.CategoryNotFoundException;
-import com.endava.expensesmanager.exception.CurrencyNotFoundException;
-import com.endava.expensesmanager.exception.ExpenseNotFoundException;
-import com.endava.expensesmanager.exception.UserNotFoundException;
 import com.endava.expensesmanager.model.dto.ExpenseDto;
 import com.endava.expensesmanager.model.entity.Category;
 import com.endava.expensesmanager.model.entity.Currency;
 import com.endava.expensesmanager.model.entity.Expense;
 import com.endava.expensesmanager.model.entity.User;
-import com.endava.expensesmanager.repository.CategoryRepository;
-import com.endava.expensesmanager.repository.CurrencyRepository;
-import com.endava.expensesmanager.repository.ExpenseRepository;
-import com.endava.expensesmanager.repository.UserRepository;
-
-import java.util.List;
 
 public class ExpenseMapper {
 
