@@ -18,7 +18,7 @@ public class DocumentBlobServiceImpl implements DocumentBlobService {
     public BlobContainerClient containerClient() {
         return new BlobContainerClientBuilder()
                 .connectionString(azureBlobProperties.getConnectionString())
-                .containerName(azureBlobProperties.getContainer())
+                .containerName(azureBlobProperties.getContainerName())
                 .buildClient();
     }
 
