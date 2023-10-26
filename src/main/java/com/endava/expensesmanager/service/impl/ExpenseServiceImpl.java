@@ -1,12 +1,8 @@
 package com.endava.expensesmanager.service.impl;
 
-import com.endava.expensesmanager.exception.CategoryNotFoundException;
-import com.endava.expensesmanager.exception.CurrencyNotFoundException;
 import com.endava.expensesmanager.exception.ExpenseNotFoundException;
 import com.endava.expensesmanager.exception.UserNotFoundException;
 import com.endava.expensesmanager.model.dto.ExpenseDto;
-import com.endava.expensesmanager.model.entity.Category;
-import com.endava.expensesmanager.model.entity.Currency;
 import com.endava.expensesmanager.model.entity.Expense;
 import com.endava.expensesmanager.model.entity.User;
 import com.endava.expensesmanager.model.mapper.ExpenseMapper;
@@ -29,28 +25,16 @@ import java.util.stream.Stream;
 public class ExpenseServiceImpl implements ExpenseService {
     private final ExpenseRepository expenseRepository;
     private final UserRepository userRepository;
-    private final CategoryRepository categoryRepository;
-    private final CurrencyRepository currencyRepository;
 
     public ExpenseServiceImpl(ExpenseRepository expenseRepository, UserRepository userRepository, CategoryRepository categoryRepository, CurrencyRepository currencyRepository) {
         this.expenseRepository = expenseRepository;
         this.userRepository = userRepository;
-        this.categoryRepository = categoryRepository;
-        this.currencyRepository = currencyRepository;
     }
 
     @Override
     public void addExpense(ExpenseDto expenseDto) {
         if (!userRepository.existsById(expenseDto.getUserId())) {
             throw new UserNotFoundException(expenseDto.getUserId());
-        }
-
-        if (!categoryRepository.existsById(expenseDto.getCategoryId())) {
-            throw new CategoryNotFoundException(expenseDto.getCategoryId());
-        }
-
-        if (!currencyRepository.existsById(expenseDto.getCurrencyId())) {
-            throw new CurrencyNotFoundException(expenseDto.getCurrencyId());
         }
 
         expenseRepository.save(ExpenseMapper.toExpense(expenseDto));
@@ -64,19 +48,13 @@ public class ExpenseServiceImpl implements ExpenseService {
         User user = userRepository.findById(expenseDto.getUserId())
                 .orElseThrow(() -> new UserNotFoundException(expenseDto.getUserId()));
 
-        Category category = categoryRepository.findById(expenseDto.getCategoryId())
-                .orElseThrow(() -> new CategoryNotFoundException(expenseDto.getCategoryId()));
-
-        Currency currency = currencyRepository.findById(expenseDto.getCurrencyId())
-                .orElseThrow(() -> new CurrencyNotFoundException(expenseDto.getCurrencyId()));
-
-        Expense updatedExpense = ExpenseMapper.toUpdatedExpense(existingExpense, expenseDto, user, category, currency);
+        Expense updatedExpense = ExpenseMapper.toUpdatedExpense(existingExpense, expenseDto, user, expenseDto.getCategory(), expenseDto.getCurrency());
 
         expenseRepository.save(updatedExpense);
     }
 
     @Override
-    public List<Expense> getExpensesByUserId(Integer userId, LocalDate startDate, LocalDate endDate) {
+    public List<ExpenseDto> getExpensesByUserId(Integer userId, LocalDate startDate, LocalDate endDate) {
 
         Stream<Expense> expensesStream = expenseRepository.findAll().stream()
                 .filter(expense -> expense.getUser().getUserId().equals(userId));
@@ -95,6 +73,7 @@ public class ExpenseServiceImpl implements ExpenseService {
         }
 
         return expensesStream
+                .map(ExpenseMapper::toDto)
                 .toList();
     }
 

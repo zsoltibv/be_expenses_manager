@@ -2,7 +2,6 @@ package com.endava.expensesmanager.model.dto;
 
 import com.endava.expensesmanager.model.entity.Category;
 import com.endava.expensesmanager.model.entity.Currency;
-import com.endava.expensesmanager.model.entity.User;
 import jakarta.validation.constraints.*;
 import lombok.Data;
 
@@ -24,8 +23,8 @@ public class ExpenseDto {
     private LocalDateTime expenseDate;
     @NotNull(message = "User id is required")
     private Integer userId;
-    @NotNull(message = "Category id required")
-    private Integer categoryId;
-    @NotNull(message = "Currency id required")
-    private Integer currencyId;
+    @NotNull(message = "Category is required")
+    private Category category;
+    @NotNull(message = "Currency is required")
+    private Currency currency;
 }

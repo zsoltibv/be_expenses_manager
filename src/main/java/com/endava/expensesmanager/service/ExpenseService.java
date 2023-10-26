@@ -10,6 +10,6 @@ import java.util.List;
 public interface ExpenseService {
         void addExpense(ExpenseDto expenseDto);
         void editExpense(Integer expenseId, ExpenseDto expenseDto);
-        List<Expense> getExpensesByUserId(Integer userId, LocalDate startDate, LocalDate endDate);
+        List<ExpenseDto> getExpensesByUserId(Integer userId, LocalDate startDate, LocalDate endDate);
         void seedExpenses(Integer nrOfExpenses, Integer nrOfDays);
 }

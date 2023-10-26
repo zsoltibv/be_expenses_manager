@@ -18,8 +18,8 @@ public class ExpenseGenerator {
         expenseDto.setAmount(BigDecimal.valueOf(ThreadLocalRandom.current().nextDouble(0.01, 1000)));
         expenseDto.setExpenseDate(LocalDateTime.now().minusDays(ThreadLocalRandom.current().nextInt(1, nrOfDays)));
         expenseDto.setUserId(1);
-        expenseDto.setCategoryId(ThreadLocalRandom.current().nextInt(1, 7));
-        expenseDto.setCurrencyId(ThreadLocalRandom.current().nextInt(1, 4));
+//        expenseDto.setCategoryId(ThreadLocalRandom.current().nextInt(1, 7));
+//        expenseDto.setCurrencyId(ThreadLocalRandom.current().nextInt(1, 4));
         return ExpenseMapper.toExpense(expenseDto);
     }
 
