@@ -4,7 +4,6 @@ import com.endava.expensesmanager.model.entity.Category;
 import com.endava.expensesmanager.repository.CategoryRepository;
 import com.endava.expensesmanager.service.CategoryService;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 
 @Service
@@ -14,7 +13,7 @@ public class CategoryServiceImpl implements CategoryService {
     public CategoryServiceImpl(CategoryRepository categoryRepository) {
         this.categoryRepository = categoryRepository;
     }
-    @Override
+
     public List<Category> getAllCategories() {
         return categoryRepository.findAll();
     }
