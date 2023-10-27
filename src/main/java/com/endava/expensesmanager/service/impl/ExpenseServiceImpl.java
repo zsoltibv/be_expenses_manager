@@ -4,6 +4,8 @@ import com.endava.expensesmanager.exception.ExpenseNotFoundException;
 import com.endava.expensesmanager.exception.UserNotFoundException;
 import com.endava.expensesmanager.generator.ExpenseGenerator;
 import com.endava.expensesmanager.model.dto.ExpenseDto;
+import com.endava.expensesmanager.model.entity.Category;
+import com.endava.expensesmanager.model.entity.Currency;
 import com.endava.expensesmanager.model.entity.Expense;
 import com.endava.expensesmanager.model.entity.User;
 import com.endava.expensesmanager.model.mapper.ExpenseMapper;
