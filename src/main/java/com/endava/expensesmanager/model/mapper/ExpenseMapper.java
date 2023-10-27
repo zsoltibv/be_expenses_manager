@@ -1,10 +1,13 @@
 package com.endava.expensesmanager.model.mapper;
 
 import com.endava.expensesmanager.model.dto.ExpenseDto;
+import com.endava.expensesmanager.model.entity.*;
 import com.endava.expensesmanager.model.entity.Category;
 import com.endava.expensesmanager.model.entity.Currency;
 import com.endava.expensesmanager.model.entity.Expense;
 import com.endava.expensesmanager.model.entity.User;
+
+import java.util.Optional;
 
 public class ExpenseMapper {
 
@@ -18,13 +21,14 @@ public class ExpenseMapper {
         user.setUserId(expenseDto.getUserId());
         expense.setUser(user);
 
-        Category category = new Category();
-        category.setCategoryId(expenseDto.getCategoryId());
-        expense.setCategory(category);
+        expense.setCategory(expenseDto.getCategory());
+        expense.setCurrency(expenseDto.getCurrency());
 
-        Currency currency = new Currency();
-        currency.setCurrencyId(expenseDto.getCurrencyId());
-        expense.setCurrency(currency);
+        if (expenseDto.getDocumentId() != null) {
+            Document document = new Document();
+            document.setDocumentId(expenseDto.getDocumentId());
+            expense.setDocument(document);
+        }
 
         return expense;
     }
@@ -36,8 +40,13 @@ public class ExpenseMapper {
         expenseDto.setExpenseDate(expense.getExpenseDate());
         expenseDto.setAmount(expense.getAmount());
         expenseDto.setUserId(expense.getUser().getUserId());
-        expenseDto.setCategoryId(expense.getCategory().getCategoryId());
-        expenseDto.setCurrencyId(expense.getCurrency().getCurrencyId());
+        Optional<Document> optionalDocument = expense.getDocument();
+        if (optionalDocument.isPresent()) {
+            Document document = optionalDocument.get();
+            expenseDto.setDocumentId(document.getDocumentId());
+        }
+        expenseDto.setCategory(expense.getCategory());
+        expenseDto.setCurrency(expense.getCurrency());
 
         return expenseDto;
     }
