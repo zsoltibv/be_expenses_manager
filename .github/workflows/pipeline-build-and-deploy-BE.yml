@@ -11,7 +11,7 @@ env:
   DB_USERNAME: ${{ secrets.TF_ADMIN_USERNAME }}
   DB_PASSWORD: ${{ secrets.TF_ADMIN_PASSWORD }}
   DB_URL: ${{ secrets.TF_MYSQL_JDBC }}
-  REPORTS_ST_SAS_TOKEN: ${{ secrets.REPORTS_ST_SAS_TOKEN }}
+  REPORTS_ST_SAS_TOKEN_URL: ${{ secrets.REPORTS_ST_SAS_TOKEN_URL }}
   
 jobs:
   Build_and_Deploy:
@@ -30,7 +30,7 @@ jobs:
       maven-version: 3.9.5 #incercam cu versiunea 3.9.5 momentan deoarece 4.0.0 nu e disponibila 
        
    - name: Build
-     run: mvn clean package -DskipTests=true -Dspring.datasource.username=$DB_USERNAME -Dspring.datasource.password=$DB_PASSWORD -Dspring.datasource.url=$DB_URL -DazureSAS_KEY=$REPORTS_ST_SAS_TOKEN
+     run: mvn clean package -DskipTests=true -Dspring.datasource.username=$DB_USERNAME -Dspring.datasource.password=$DB_PASSWORD -Dspring.datasource.url=$DB_URL -Dazure.document.blob.connectionString=$REPORTS_ST_SAS_TOKEN_URL
 
    - name: 'Create a temporary key file'
      run: |
