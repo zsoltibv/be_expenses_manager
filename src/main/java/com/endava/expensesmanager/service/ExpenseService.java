@@ -12,8 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 public interface ExpenseService {
-
-    void addExpense(ExpenseDto expenseDto);
+    void addExpense(ExpenseDto expenseDto, MultipartFile file) throws IOException;
 
     void editExpense(Integer expenseId, ExpenseDto expenseDto);
 

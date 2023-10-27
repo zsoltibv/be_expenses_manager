@@ -26,9 +26,9 @@ public class ExpenseController {
     }
 
     @PostMapping()
-    public ResponseEntity<ExpenseDto> addExpense(@RequestBody @Valid ExpenseDto expenseDto) {
-
-        expenseService.addExpense(expenseDto);
+    public ResponseEntity<ExpenseDto> addExpense(@RequestPart("expenseDto") @Valid ExpenseDto expenseDto,
+                                                 @RequestPart(value = "file", required = false) MultipartFile file) throws IOException {
+        expenseService.addExpense(expenseDto, file);
         return new ResponseEntity<>(expenseDto, HttpStatus.CREATED);
     }
 
