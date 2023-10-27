@@ -1,7 +1,5 @@
 package com.endava.expensesmanager.service.impl;
 
-import com.endava.expensesmanager.exception.CategoryNotFoundException;
-import com.endava.expensesmanager.exception.CurrencyNotFoundException;
 import com.endava.expensesmanager.exception.ExpenseNotFoundException;
 import com.endava.expensesmanager.exception.UserNotFoundException;
 import com.endava.expensesmanager.generator.ExpenseGenerator;
@@ -15,11 +13,22 @@ import com.endava.expensesmanager.repository.CategoryRepository;
 import com.endava.expensesmanager.repository.CurrencyRepository;
 import com.endava.expensesmanager.repository.ExpenseRepository;
 import com.endava.expensesmanager.repository.UserRepository;
+import com.endava.expensesmanager.service.BankStatementParser;
+import com.endava.expensesmanager.service.DocumentService;
 import com.endava.expensesmanager.service.ExpenseService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.apache.pdfbox.pdmodel.PDDocument;
 import org.springframework.stereotype.Service;
-
+import org.springframework.web.multipart.MultipartFile;
+import technology.tabula.*;
+import technology.tabula.extractors.SpreadsheetExtractionAlgorithm;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -36,31 +45,32 @@ public class ExpenseServiceImpl implements ExpenseService {
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
     private final CurrencyRepository currencyRepository;
+    private final DocumentService documentService;
 
-    public ExpenseServiceImpl(ExpenseRepository expenseRepository, UserRepository userRepository, CategoryRepository categoryRepository, CurrencyRepository currencyRepository) {
+    public ExpenseServiceImpl(ExpenseRepository expenseRepository, UserRepository userRepository, CategoryRepository categoryRepository, CurrencyRepository currencyRepository, DocumentService documentService) {
         this.expenseRepository = expenseRepository;
         this.userRepository = userRepository;
         this.categoryRepository = categoryRepository;
         this.currencyRepository = currencyRepository;
+        this.documentService = documentService;
     }
 
-
     @Override
-    public void addExpense(ExpenseDto expenseDto) {
+    public void addExpense(ExpenseDto expenseDto, MultipartFile file) throws IOException {
         if (!userRepository.existsById(expenseDto.getUserId())) {
             throw new UserNotFoundException(expenseDto.getUserId());
         }
 
-        if (!categoryRepository.existsById(expenseDto.getCategoryId())) {
-            throw new CategoryNotFoundException(expenseDto.getCategoryId());
-        }
-
-        if (!currencyRepository.existsById(expenseDto.getCurrencyId())) {
-            throw new CurrencyNotFoundException(expenseDto.getCurrencyId());
+        if(file != null) {
+            Integer documentId = documentService.addDocumentAndGetId(file);
+            expenseDto.setDocumentId(documentId);
         }
 
         expenseRepository.save(ExpenseMapper.toExpense(expenseDto));
     }
+
+
+
 
     @Override
     public void editExpense(Integer expenseId, ExpenseDto expenseDto) {
@@ -70,13 +80,7 @@ public class ExpenseServiceImpl implements ExpenseService {
         User user = userRepository.findById(expenseDto.getUserId())
                 .orElseThrow(() -> new UserNotFoundException(expenseDto.getUserId()));
 
-        Category category = categoryRepository.findById(expenseDto.getCategoryId())
-                .orElseThrow(() -> new CategoryNotFoundException(expenseDto.getCategoryId()));
-
-        Currency currency = currencyRepository.findById(expenseDto.getCurrencyId())
-                .orElseThrow(() -> new CurrencyNotFoundException(expenseDto.getCurrencyId()));
-
-        Expense updatedExpense = ExpenseMapper.toUpdatedExpense(existingExpense, expenseDto, user, category, currency);
+        Expense updatedExpense = ExpenseMapper.toUpdatedExpense(existingExpense, expenseDto, user, expenseDto.getCategory(), expenseDto.getCurrency());
 
         expenseRepository.save(updatedExpense);
     }
@@ -119,7 +123,7 @@ public class ExpenseServiceImpl implements ExpenseService {
     public Map<String, BigDecimal> sortExpenses(List<ExpenseDto> expenses) {
         return expenses.stream()
                 .collect(Collectors.groupingBy(
-                        expense -> categoryRepository.findById(expense.getCategoryId()).get().getDescription(),
+                        expense -> categoryRepository.findById(expense.getCategory().getCategoryId()).get().getDescription(),
                         Collectors.mapping(ExpenseDto::getAmount, Collectors.reducing(BigDecimal.ZERO, BigDecimal::add))
                 ));
     }
@@ -138,22 +142,54 @@ public class ExpenseServiceImpl implements ExpenseService {
 
         List<Expense> expensesList = new ArrayList<>();
         for (int i = 0; i < nrOfExpenses; i++) {
-            expensesList.add(ExpenseGenerator.generateFakeExpense(nrOfDays));
+            expensesList.add(ExpenseGenerator.generateFakeExpense(
+                    nrOfDays,
+                    categoryRepository.findAll(),
+                    currencyRepository.findAll()
+            ));
         }
 
         expenseRepository.saveAll(expensesList);
     }
 
+
     @Override
     public void  deleteExpenseById(Integer expenseId) {
-        Optional<Expense> expenseOptional=expenseRepository.findById(expenseId);
-        if(expenseOptional.isPresent())
-        {
+        Optional<Expense> expenseOptional = expenseRepository.findById(expenseId);
+        if (expenseOptional.isPresent()) {
             expenseRepository.deleteById(expenseId);
 
+        } else
+            throw new ExpenseNotFoundException(expenseId);
+    }
+
+
+    @Override
+    public List<ExpenseDto> extractAndSaveExpensesFromPdf(Integer userId, MultipartFile pdfFile) throws IOException {
+
+        if(!userRepository.existsById(userId)) {
+            throw new UserNotFoundException(userId);
         }
-        else
-           throw new ExpenseNotFoundException(expenseId);
+
+        Category category = categoryRepository.findByDescription("Bank Statement");
+
+        Currency currency = currencyRepository.findByCode("RON");
+
+        InputStream pdfInputStream = pdfFile.getInputStream();
+
+        List<Expense> expensesList = new BankStatementParserBRD().parseBankStatement(pdfInputStream);
+
+        expensesList.stream()
+                .forEach(expense -> {
+                    expense.setUser(userRepository.findById(userId).get());
+                    expense.setCategory(category);
+                    expense.setCurrency(currency);
+                    expenseRepository.save(expense);
+                });
+
+        return expensesList.stream()
+                .map(ExpenseMapper::toDto)
+                .toList();
 
     }
 }

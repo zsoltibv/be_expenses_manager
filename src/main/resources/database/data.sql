@@ -19,4 +19,5 @@ VALUES
   ('Entertainment', '#FF8084'),
   ('Subscriptions', '#E83FAB'),
   ('Coffee', '#76A305'),
-  ('House Hold', '#17C99E');
+  ('House Hold', '#17C99E'),
+  ('Bank Statement', '#F5A623');

@@ -34,6 +34,40 @@ paths:
           description: "Created"
         "400":
           description: "Bad request"
+  /expense/extractAndSaveExpensesFromPdf/{userId}:
+    post:
+      tags:
+        - "expense"
+      summary: "Extract expenses from PDF and save"
+      operationId: "extractAndSaveExpensesFromPdf"
+      parameters:
+        - name: "userId"
+          in: path
+          description: "Id of current user"
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                pdfFile:
+                  type: string
+                  format: binary
+        description: "PDF file to import expenses from"
+        required: true
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Expenses'
+          description: "Created"
+        '400':
+          description: "Bad request"
   /expense/byUser/{userId}:
     get:
       tags:

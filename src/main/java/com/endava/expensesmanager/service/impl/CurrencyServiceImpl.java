@@ -64,12 +64,12 @@ public class CurrencyServiceImpl implements CurrencyService {
 
     public List<ExpenseDto> changeCurrencyTo(String code, List<ExpenseDto> expenseList) {
         for (ExpenseDto expense : expenseList) {
-            if (!Objects.equals(currencyRepository.findById(expense.getCurrencyId()).get().getCode(), code)) {
+            if (!Objects.equals(currencyRepository.findById(expense.getCurrency().getCurrencyId()).get().getCode(), code)) {
 
                 expense.setAmount(expense.getAmount()
                         .multiply(exchangeRates.get(code))
-                        .divide(exchangeRates.get(currencyRepository.findById(expense.getCurrencyId()).get().getCode()), 6, RoundingMode.HALF_UP));
-                expense.setCurrencyId(currencyRepository.findByCode(code).getCurrencyId());
+                        .divide(exchangeRates.get(currencyRepository.findById(expense.getCurrency().getCurrencyId()).get().getCode()), 6, RoundingMode.HALF_UP));
+                expense.setCurrency(currencyRepository.findByCode(code));
 
             }
         }
