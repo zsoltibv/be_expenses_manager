@@ -1,6 +1,7 @@
 package com.endava.expensesmanager.service;
 
 import com.endava.expensesmanager.model.dto.ExpenseDto;
+import com.endava.expensesmanager.model.entity.Expense;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;

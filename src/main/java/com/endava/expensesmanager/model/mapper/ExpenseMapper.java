@@ -18,26 +18,20 @@ public class ExpenseMapper {
         user.setUserId(expenseDto.getUserId());
         expense.setUser(user);
 
-        Category category = new Category();
-        category.setCategoryId(expenseDto.getCategoryId());
-        expense.setCategory(category);
-
-        Currency currency = new Currency();
-        currency.setCurrencyId(expenseDto.getCurrencyId());
-        expense.setCurrency(currency);
+        expense.setCategory(expenseDto.getCategory());
+        expense.setCurrency(expenseDto.getCurrency());
 
         return expense;
     }
 
     public static ExpenseDto toDto(Expense expense) {
         ExpenseDto expenseDto = new ExpenseDto();
-        expenseDto.setExpenseId(expense.getExpenseId());
         expenseDto.setDescription(expense.getDescription());
         expenseDto.setExpenseDate(expense.getExpenseDate());
         expenseDto.setAmount(expense.getAmount());
         expenseDto.setUserId(expense.getUser().getUserId());
-        expenseDto.setCategoryId(expense.getCategory().getCategoryId());
-        expenseDto.setCurrencyId(expense.getCurrency().getCurrencyId());
+        expenseDto.setCategory(expense.getCategory());
+        expenseDto.setCurrency(expense.getCurrency());
 
         return expenseDto;
     }

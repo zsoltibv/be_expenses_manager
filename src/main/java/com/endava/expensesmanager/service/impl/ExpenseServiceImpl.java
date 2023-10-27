@@ -1,13 +1,9 @@
 package com.endava.expensesmanager.service.impl;
 
-import com.endava.expensesmanager.exception.CategoryNotFoundException;
-import com.endava.expensesmanager.exception.CurrencyNotFoundException;
 import com.endava.expensesmanager.exception.ExpenseNotFoundException;
 import com.endava.expensesmanager.exception.UserNotFoundException;
 import com.endava.expensesmanager.generator.ExpenseGenerator;
 import com.endava.expensesmanager.model.dto.ExpenseDto;
-import com.endava.expensesmanager.model.entity.Category;
-import com.endava.expensesmanager.model.entity.Currency;
 import com.endava.expensesmanager.model.entity.Expense;
 import com.endava.expensesmanager.model.entity.User;
 import com.endava.expensesmanager.model.mapper.ExpenseMapper;
@@ -35,26 +31,17 @@ public class ExpenseServiceImpl implements ExpenseService {
     private final CategoryRepository categoryRepository;
     private final CurrencyRepository currencyRepository;
 
-    public ExpenseServiceImpl(ExpenseRepository expenseRepository, UserRepository userRepository, CategoryRepository categoryRepository, CurrencyRepository currencyRepository) {
+    public ExpenseServiceImpl(ExpenseRepository expenseRepository, UserRepository userRepository, CategoryRepository categoryRepository, CurrencyRepository currencyRepository, CategoryRepository categoryRepository1, CurrencyRepository currencyRepository1) {
         this.expenseRepository = expenseRepository;
         this.userRepository = userRepository;
-        this.categoryRepository = categoryRepository;
-        this.currencyRepository = currencyRepository;
+        this.categoryRepository = categoryRepository1;
+        this.currencyRepository = currencyRepository1;
     }
-
 
     @Override
     public void addExpense(ExpenseDto expenseDto) {
         if (!userRepository.existsById(expenseDto.getUserId())) {
             throw new UserNotFoundException(expenseDto.getUserId());
-        }
-
-        if (!categoryRepository.existsById(expenseDto.getCategoryId())) {
-            throw new CategoryNotFoundException(expenseDto.getCategoryId());
-        }
-
-        if (!currencyRepository.existsById(expenseDto.getCurrencyId())) {
-            throw new CurrencyNotFoundException(expenseDto.getCurrencyId());
         }
 
         expenseRepository.save(ExpenseMapper.toExpense(expenseDto));
@@ -68,13 +55,7 @@ public class ExpenseServiceImpl implements ExpenseService {
         User user = userRepository.findById(expenseDto.getUserId())
                 .orElseThrow(() -> new UserNotFoundException(expenseDto.getUserId()));
 
-        Category category = categoryRepository.findById(expenseDto.getCategoryId())
-                .orElseThrow(() -> new CategoryNotFoundException(expenseDto.getCategoryId()));
-
-        Currency currency = currencyRepository.findById(expenseDto.getCurrencyId())
-                .orElseThrow(() -> new CurrencyNotFoundException(expenseDto.getCurrencyId()));
-
-        Expense updatedExpense = ExpenseMapper.toUpdatedExpense(existingExpense, expenseDto, user, category, currency);
+        Expense updatedExpense = ExpenseMapper.toUpdatedExpense(existingExpense, expenseDto, user, expenseDto.getCategory(), expenseDto.getCurrency());
 
         expenseRepository.save(updatedExpense);
     }
@@ -117,7 +98,7 @@ public class ExpenseServiceImpl implements ExpenseService {
     public Map<String, BigDecimal> sortExpenses(List<ExpenseDto> expenses) {
         return expenses.stream()
                 .collect(Collectors.groupingBy(
-                        expense -> categoryRepository.findById(expense.getCategoryId()).get().getDescription(),
+                        expense -> categoryRepository.findById(expense.getCategory().getCategoryId()).get().getDescription(),
                         Collectors.mapping(ExpenseDto::getAmount, Collectors.reducing(BigDecimal.ZERO, BigDecimal::add))
                 ));
     }
@@ -136,7 +117,11 @@ public class ExpenseServiceImpl implements ExpenseService {
 
         List<Expense> expensesList = new ArrayList<>();
         for (int i = 0; i < nrOfExpenses; i++) {
-            expensesList.add(ExpenseGenerator.generateFakeExpense(nrOfDays));
+            expensesList.add(ExpenseGenerator.generateFakeExpense(
+                    nrOfDays,
+                    categoryRepository.findAll(),
+                    currencyRepository.findAll()
+            ));
         }
 
         expenseRepository.saveAll(expensesList);

@@ -1,7 +1,5 @@
 package com.endava.expensesmanager.exception.handler;
 
-import com.endava.expensesmanager.exception.CategoryNotFoundException;
-import com.endava.expensesmanager.exception.CurrencyNotFoundException;
 import com.endava.expensesmanager.exception.ExpenseNotFoundException;
 import com.endava.expensesmanager.exception.UserNotFoundException;
 import com.endava.expensesmanager.exception.response.ApiError;
@@ -50,7 +48,7 @@ public class ApiExceptionHandler {
         return new ResponseEntity<>(apiError, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler({ExpenseNotFoundException.class, CategoryNotFoundException.class, CurrencyNotFoundException.class, UserNotFoundException.class})
+    @ExceptionHandler({ExpenseNotFoundException.class, UserNotFoundException.class})
     public ResponseEntity<ApiErrorSingle> handleNotFoundExceptions(Exception e, ServletWebRequest request) {
 
         ApiErrorSingle apiError = new ApiErrorSingle(
