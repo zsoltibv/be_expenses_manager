@@ -12,10 +12,10 @@ import java.util.Map;
 public interface ExpenseService {
 
 
-        void editExpense(Integer expenseId, ExpenseDto expenseDto);//
-        List<ExpenseDto> getExpensesByUserId(Integer userId, LocalDate startDate, LocalDate endDate);//
-  List<ExpenseDto> getExpensesByBeginDateAndEndDate(LocalDateTime beginDate, LocalDateTime endDate, Integer userId);//
-        void seedExpenses(Integer nrOfExpenses, Integer nrOfDays);//
+        void editExpense(Integer expenseId, ExpenseDto expenseDto);
+        List<ExpenseDto> getExpensesByUserId(Integer userId, LocalDate startDate, LocalDate endDate);
+  List<ExpenseDto> getExpensesByBeginDateAndEndDate(LocalDateTime beginDate, LocalDateTime endDate, Integer userId);
+        void seedExpenses(Integer nrOfExpenses, Integer nrOfDays);
 
     void addExpense(ExpenseDto expenseDto, MultipartFile file) throws IOException;
 

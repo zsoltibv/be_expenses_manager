@@ -13,22 +13,12 @@ import com.endava.expensesmanager.repository.CategoryRepository;
 import com.endava.expensesmanager.repository.CurrencyRepository;
 import com.endava.expensesmanager.repository.ExpenseRepository;
 import com.endava.expensesmanager.repository.UserRepository;
-import com.endava.expensesmanager.service.BankStatementParser;
 import com.endava.expensesmanager.service.DocumentService;
 import com.endava.expensesmanager.service.ExpenseService;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.apache.pdfbox.pdmodel.PDDocument;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import technology.tabula.*;
-import technology.tabula.extractors.SpreadsheetExtractionAlgorithm;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -61,16 +51,13 @@ public class ExpenseServiceImpl implements ExpenseService {
             throw new UserNotFoundException(expenseDto.getUserId());
         }
 
-        if(file != null) {
+        if (file != null) {
             Integer documentId = documentService.addDocumentAndGetId(file);
             expenseDto.setDocumentId(documentId);
         }
 
         expenseRepository.save(ExpenseMapper.toExpense(expenseDto));
     }
-
-
-
 
     @Override
     public void editExpense(Integer expenseId, ExpenseDto expenseDto) {
@@ -152,9 +139,8 @@ public class ExpenseServiceImpl implements ExpenseService {
         expenseRepository.saveAll(expensesList);
     }
 
-
     @Override
-    public void  deleteExpenseById(Integer expenseId) {
+    public void deleteExpenseById(Integer expenseId) {
         Optional<Expense> expenseOptional = expenseRepository.findById(expenseId);
         if (expenseOptional.isPresent()) {
             expenseRepository.deleteById(expenseId);
@@ -167,7 +153,7 @@ public class ExpenseServiceImpl implements ExpenseService {
     @Override
     public List<ExpenseDto> extractAndSaveExpensesFromPdf(Integer userId, MultipartFile pdfFile) throws IOException {
 
-        if(!userRepository.existsById(userId)) {
+        if (!userRepository.existsById(userId)) {
             throw new UserNotFoundException(userId);
         }
 
@@ -190,6 +176,5 @@ public class ExpenseServiceImpl implements ExpenseService {
         return expensesList.stream()
                 .map(ExpenseMapper::toDto)
                 .toList();
-
     }
 }
