@@ -7,7 +7,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -23,9 +25,9 @@ public class ExpenseController {
     }
 
     @PostMapping()
-    public ResponseEntity<ExpenseDto> addExpense(@RequestBody @Valid ExpenseDto expenseDto) {
-
-        expenseService.addExpense(expenseDto);
+    public ResponseEntity<ExpenseDto> addExpense(@RequestPart("expenseDto") @Valid ExpenseDto expenseDto,
+                                                 @RequestPart(value = "file", required = false) MultipartFile file) throws IOException {
+        expenseService.addExpense(expenseDto, file);
         return new ResponseEntity<>(expenseDto, HttpStatus.CREATED);
     }
 

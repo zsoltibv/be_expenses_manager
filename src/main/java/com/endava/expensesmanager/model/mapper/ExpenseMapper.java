@@ -1,6 +1,7 @@
 package com.endava.expensesmanager.model.mapper;
 
 import com.endava.expensesmanager.model.dto.ExpenseDto;
+import com.endava.expensesmanager.model.entity.*;
 import com.endava.expensesmanager.model.entity.Category;
 import com.endava.expensesmanager.model.entity.Currency;
 import com.endava.expensesmanager.model.entity.Expense;
@@ -21,6 +22,12 @@ public class ExpenseMapper {
         expense.setCategory(expenseDto.getCategory());
         expense.setCurrency(expenseDto.getCurrency());
 
+        if (expenseDto.getDocumentId() != null) {
+            Document document = new Document();
+            document.setDocumentId(expenseDto.getDocumentId());
+            expense.setDocument(document);
+        }
+
         return expense;
     }
 
@@ -30,6 +37,7 @@ public class ExpenseMapper {
         expenseDto.setExpenseDate(expense.getExpenseDate());
         expenseDto.setAmount(expense.getAmount());
         expenseDto.setUserId(expense.getUser().getUserId());
+        expenseDto.setDocumentId(expense.getDocument().getDocumentId());
         expenseDto.setCategory(expense.getCategory());
         expenseDto.setCurrency(expense.getCurrency());
 

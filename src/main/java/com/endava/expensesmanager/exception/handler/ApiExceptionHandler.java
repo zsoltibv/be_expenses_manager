@@ -1,6 +1,9 @@
 package com.endava.expensesmanager.exception.handler;
 
+
 import com.endava.expensesmanager.exception.ExpenseNotFoundException;
+import com.endava.expensesmanager.exception.FileSizeExceededException;
+import com.endava.expensesmanager.exception.InvalidImageFormatException;
 import com.endava.expensesmanager.exception.UserNotFoundException;
 import com.endava.expensesmanager.exception.response.ApiError;
 import com.endava.expensesmanager.exception.response.ApiErrorSingle;
@@ -35,6 +38,7 @@ public class ApiExceptionHandler {
         );
         return new ResponseEntity<>(apiError, HttpStatus.BAD_REQUEST);
     }
+
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ApiErrorSingle> handleMethodArgumentNotValidException(IllegalArgumentException e,
                                                                           ServletWebRequest request) {
@@ -59,6 +63,19 @@ public class ApiExceptionHandler {
         );
 
         return new ResponseEntity<>(apiError, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler({InvalidImageFormatException.class, FileSizeExceededException.class})
+    public ResponseEntity<ApiErrorSingle> handleImageUploadExceptions(Exception e, ServletWebRequest request) {
+
+        ApiErrorSingle apiError = new ApiErrorSingle(
+                request.getRequest().getRequestURI(),
+                e.getMessage(),
+                HttpStatus.UNSUPPORTED_MEDIA_TYPE.value(),
+                LocalDateTime.now()
+        );
+
+        return new ResponseEntity<>(apiError, HttpStatus.UNSUPPORTED_MEDIA_TYPE);
     }
 }
 

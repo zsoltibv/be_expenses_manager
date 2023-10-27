@@ -23,6 +23,7 @@ public class ExpenseDto {
     private LocalDateTime expenseDate;
     @NotNull(message = "User id is required")
     private Integer userId;
+    private Integer documentId;
     @NotNull(message = "Category is required")
     private Category category;
     @NotNull(message = "Currency is required")

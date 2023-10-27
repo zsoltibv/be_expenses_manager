@@ -29,4 +29,7 @@ public class Expense {
     @ManyToOne
     @JoinColumn(name = "currency_id")
     private Currency currency;
+    @OneToOne
+    @JoinColumn(name = "document_id")
+    private Document document;
 }

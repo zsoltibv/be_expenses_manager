@@ -1,8 +1,9 @@
 package com.endava.expensesmanager.service;
 
 import com.endava.expensesmanager.model.dto.ExpenseDto;
-import com.endava.expensesmanager.model.entity.Expense;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -10,8 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 public interface ExpenseService {
-
-    void addExpense(ExpenseDto expenseDto);
+    void addExpense(ExpenseDto expenseDto, MultipartFile file) throws IOException;
 
     void editExpense(Integer expenseId, ExpenseDto expenseDto);
 
@@ -22,5 +22,4 @@ public interface ExpenseService {
     Map<String, BigDecimal> sortExpenses(List<ExpenseDto> expenses);
 
     void seedExpenses(Integer nrOfExpenses, Integer nrOfDays);
-
 }
