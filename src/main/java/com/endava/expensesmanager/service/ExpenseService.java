@@ -24,7 +24,7 @@ public interface ExpenseService {
     Map<String, BigDecimal> sortExpenses(List<ExpenseDto> expenses);
 
     void seedExpenses(Integer nrOfExpenses, Integer nrOfDays);
-  
-    void extractExpensesFromPdf(Integer userId, MultipartFile pdfFile) throws IOException;
+
+    List<ExpenseDto> extractAndSaveExpensesFromPdf(Integer userId, MultipartFile pdfFile) throws IOException;
 
 }

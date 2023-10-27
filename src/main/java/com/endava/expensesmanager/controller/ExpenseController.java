@@ -45,11 +45,11 @@ public class ExpenseController {
         return new ResponseEntity<>(expenses, HttpStatus.OK);
     }
 
-    @PostMapping("/extractExpensesFromPdf/{userId}")
-    public ResponseEntity<List<ExpenseDto>> extractExpensesFromPdf(@PathVariable Integer userId, @RequestPart(value = "file") MultipartFile pdfFile) throws IOException {
+    @PostMapping("/extractAndSaveExpensesFromPdf/{userId}")
+    public ResponseEntity<List<ExpenseDto>> extractAndSaveExpensesFromPdf(@PathVariable Integer userId, @RequestPart(value = "file") MultipartFile pdfFile) throws IOException {
 
-        expenseService.extractExpensesFromPdf(userId, pdfFile);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        List<ExpenseDto> expenses = expenseService.extractAndSaveExpensesFromPdf(userId, pdfFile);
+        return new ResponseEntity<>(expenses, HttpStatus.CREATED);
 
     }
 

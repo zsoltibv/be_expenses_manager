@@ -156,21 +156,15 @@ public class ExpenseServiceImpl implements ExpenseService {
         expenseRepository.saveAll(expensesList);
     }
     @Override
-    public void extractExpensesFromPdf(Integer userId, MultipartFile pdfFile) throws IOException {
+    public List<ExpenseDto> extractAndSaveExpensesFromPdf(Integer userId, MultipartFile pdfFile) throws IOException {
 
         if(!userRepository.existsById(userId)) {
             throw new UserNotFoundException(userId);
         }
 
-        Category category = categoryRepository.findAll().stream()
-                .filter(cat -> "Bank Statement".equalsIgnoreCase(cat.getDescription()))
-                .findFirst()
-                .orElse(null);
+        Category category = categoryRepository.findByDescription("Bank Statement");
 
-        Currency currency = currencyRepository.findAll().stream()
-                .filter(cur -> "RON".equalsIgnoreCase(cur.getCode()))
-                .findFirst()
-                .orElse(null);
+        Currency currency = currencyRepository.findByCode("RON");
 
         InputStream pdfInputStream = pdfFile.getInputStream();
 
@@ -183,5 +177,9 @@ public class ExpenseServiceImpl implements ExpenseService {
                     expense.setCurrency(currency);
                     expenseRepository.save(expense);
                 });
+
+        return expensesList.stream()
+                .map(ExpenseMapper::toDto)
+                .toList();
     }
 }
