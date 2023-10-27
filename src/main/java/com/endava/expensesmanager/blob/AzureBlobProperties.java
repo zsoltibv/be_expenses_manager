@@ -10,13 +10,5 @@ import org.springframework.stereotype.Component;
 @Setter
 @ConfigurationProperties("azure.document.blob")
 public class AzureBlobProperties {
-    private String containerName;
-    private String accountName;
-    private String accountKey;
-    private String defaultProtocol;
-    private String endpointSuffix;
-    public String getConnectionString() {
-        return String.format("DefaultEndpointsProtocol=%s;AccountName=%s;AccountKey=%s;EndpointSuffix=%s",
-                defaultProtocol, accountName, accountKey, endpointSuffix);
-    }
+    private String connectionString;
 }

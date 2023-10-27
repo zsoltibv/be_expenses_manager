@@ -15,16 +15,11 @@ public class DocumentBlobServiceImpl implements DocumentBlobService {
     private final AzureBlobProperties azureBlobProperties;
 
     @Override
-    public BlobContainerClient containerClient() {
-        return new BlobContainerClientBuilder()
-                .connectionString(azureBlobProperties.getConnectionString())
-                .containerName(azureBlobProperties.getContainerName())
-                .buildClient();
-    }
-
-    @Override
     public void storeFile(String filename, InputStream content, Long length){
-        BlobClient client = containerClient().getBlobClient(filename);
+        BlobClient client = new BlobClientBuilder()
+                .endpoint(azureBlobProperties.getConnectionString())
+                .blobName(filename)
+                .buildClient();
 
         if(client.exists()){
             throw new FileExistsException(filename);
