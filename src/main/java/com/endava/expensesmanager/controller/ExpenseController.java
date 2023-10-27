@@ -1,6 +1,7 @@
 package com.endava.expensesmanager.controller;
 
 import com.endava.expensesmanager.model.dto.ExpenseDto;
+import com.endava.expensesmanager.model.entity.Category;
 import com.endava.expensesmanager.service.ExpenseService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -44,6 +45,13 @@ public class ExpenseController {
         return new ResponseEntity<>(expenses, HttpStatus.OK);
     }
 
+    @PostMapping("/extractAndSaveExpensesFromPdf/{userId}")
+    public ResponseEntity<List<ExpenseDto>> extractAndSaveExpensesFromPdf(@PathVariable Integer userId, @RequestPart(value = "file") MultipartFile pdfFile) throws IOException {
+
+        List<ExpenseDto> expenses = expenseService.extractAndSaveExpensesFromPdf(userId, pdfFile);
+        return new ResponseEntity<>(expenses, HttpStatus.CREATED);
+
+    }
 
     @PostMapping("/seed")
     public ResponseEntity<String> seedExpenses(@RequestParam(required = false) Integer nrOfExpenses, @RequestParam(required = false) Integer nrOfDays) {

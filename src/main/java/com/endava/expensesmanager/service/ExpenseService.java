@@ -1,6 +1,7 @@
 package com.endava.expensesmanager.service;
 
 import com.endava.expensesmanager.model.dto.ExpenseDto;
+import com.endava.expensesmanager.model.entity.Category;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -22,4 +23,7 @@ public interface ExpenseService {
     Map<String, BigDecimal> sortExpenses(List<ExpenseDto> expenses);
 
     void seedExpenses(Integer nrOfExpenses, Integer nrOfDays);
+
+    List<ExpenseDto> extractAndSaveExpensesFromPdf(Integer userId, MultipartFile pdfFile) throws IOException;
+
 }
