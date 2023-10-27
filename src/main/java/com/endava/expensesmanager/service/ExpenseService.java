@@ -17,7 +17,7 @@ public interface ExpenseService {
         List<ExpenseDto> getExpensesByUserId(Integer userId, LocalDate startDate, LocalDate endDate);//
   List<ExpenseDto> getExpensesByBeginDateAndEndDate(LocalDateTime beginDate, LocalDateTime endDate, Integer userId);//
         void seedExpenses(Integer nrOfExpenses, Integer nrOfDays);//
-   
+
         void deleteExpenseById(Integer expenseId);
   Map<String, BigDecimal> sortExpenses(List<ExpenseDto> expenses);
 

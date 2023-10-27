@@ -152,7 +152,8 @@ public class ExpenseServiceImpl implements ExpenseService {
             expenseRepository.deleteById(expenseId);
 
         }
-        throw new ExpenseNotFoundException(expenseId);
+        else
+           throw new ExpenseNotFoundException(expenseId);
 
     }
 }
