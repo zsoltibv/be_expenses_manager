@@ -1,7 +1,6 @@
 package com.endava.expensesmanager.controller;
 
 import com.endava.expensesmanager.model.dto.ExpenseDto;
-import com.endava.expensesmanager.model.entity.Category;
 import com.endava.expensesmanager.service.ExpenseService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;

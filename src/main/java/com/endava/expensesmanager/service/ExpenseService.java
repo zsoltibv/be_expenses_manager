@@ -1,12 +1,7 @@
 package com.endava.expensesmanager.service;
 
 import com.endava.expensesmanager.model.dto.ExpenseDto;
-import com.endava.expensesmanager.model.entity.Expense;
-import org.springframework.http.ResponseEntity;
-import com.endava.expensesmanager.model.entity.Category;
 import org.springframework.web.multipart.MultipartFile;
-
-
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
