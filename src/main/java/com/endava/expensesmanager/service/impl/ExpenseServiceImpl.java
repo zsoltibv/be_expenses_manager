@@ -13,20 +13,12 @@ import com.endava.expensesmanager.repository.CategoryRepository;
 import com.endava.expensesmanager.repository.CurrencyRepository;
 import com.endava.expensesmanager.repository.ExpenseRepository;
 import com.endava.expensesmanager.repository.UserRepository;
-import com.endava.expensesmanager.service.BankStatementParser;
 import com.endava.expensesmanager.service.DocumentService;
 import com.endava.expensesmanager.service.ExpenseService;
-import org.apache.pdfbox.pdmodel.PDDocument;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import technology.tabula.*;
-import technology.tabula.extractors.SpreadsheetExtractionAlgorithm;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -160,6 +152,8 @@ public class ExpenseServiceImpl implements ExpenseService {
         InputStream pdfInputStream = pdfFile.getInputStream();
 
         List<Expense> expensesList = new BankStatementParserBRD().parseBankStatement(pdfInputStream);
+
+        pdfInputStream.close();
 
         expensesList.stream()
                 .forEach(expense -> {
