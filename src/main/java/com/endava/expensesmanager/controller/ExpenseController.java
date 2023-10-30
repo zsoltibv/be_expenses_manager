@@ -31,7 +31,6 @@ public class ExpenseController {
     }
 
     @PutMapping("/{expenseId}")
-
     public ResponseEntity<ExpenseDto> editExpense(@PathVariable Integer expenseId, @RequestBody @Valid ExpenseDto expenseDto) {
 
         expenseService.editExpense(expenseId, expenseDto);
@@ -57,7 +56,7 @@ public class ExpenseController {
         return new ResponseEntity<>("Expenses added successfully!", HttpStatus.CREATED);
     }
 
-    @DeleteMapping("{/expenseId}")
+    @DeleteMapping("/{expenseId}")
     public ResponseEntity<String> deleteExpenseById(@PathVariable Integer expenseId) {
         expenseService.deleteExpenseById(expenseId);
         return new ResponseEntity<>("Expense with id " + expenseId + " deleted successfully!", HttpStatus.OK);
