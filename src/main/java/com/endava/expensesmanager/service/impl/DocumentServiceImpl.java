@@ -26,14 +26,7 @@ public class DocumentServiceImpl implements DocumentService {
 
     @Override
     public Integer addDocumentAndGetId(MultipartFile file) throws IOException {
-        String contentType = file.getContentType();
-        if (contentType == null || !contentType.startsWith("image/")) {
-            throw new InvalidImageFormatException(contentType);
-        }
-
-        if (file.getSize() > MAX_SIZE_IN_MB * 1024 * 1024) {
-            throw new FileSizeExceededException(MAX_SIZE_IN_MB);
-        }
+        validateDocument(file);
 
         String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
         documentBlobService.storeFile(fileName, file.getInputStream(), file.getSize());
@@ -42,12 +35,43 @@ public class DocumentServiceImpl implements DocumentService {
     }
 
     @Override
-    public void deleteDocumentById(Integer documentId)  {
+    public void deleteDocumentById(Integer documentId) {
         Optional<Document> document = documentRepository.findById(documentId);
 
-        if(document.isPresent()){
+        if (document.isPresent()) {
             documentBlobService.deleteFile(document.get().getName());
             documentRepository.deleteById(documentId);
+        }
+    }
+
+    @Override
+    public Integer editDocumentAndGetId(Integer documentId, MultipartFile file) {
+        Optional<Document> existingDocument = documentRepository.findById(documentId);
+
+        if (existingDocument.isPresent()) {
+            Document document = existingDocument.get();
+            documentBlobService.deleteFile(document.getName());
+
+            validateDocument(file);
+
+            String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
+            documentBlobService.storeFile(fileName, file.getInputStream(), file.getSize());
+
+            document.setName(fileName);
+            documentRepository.save(document);
+            return
+        }
+        throw new DocumentNotFoundException(documentId);
+    }
+
+    private void validateDocument(MultipartFile file) {
+        String contentType = file.getContentType();
+        if (contentType == null || !contentType.startsWith("image/")) {
+            throw new InvalidImageFormatException(contentType);
+        }
+
+        if (file.getSize() > MAX_SIZE_IN_MB * 1024 * 1024) {
+            throw new FileSizeExceededException(MAX_SIZE_IN_MB);
         }
     }
 }

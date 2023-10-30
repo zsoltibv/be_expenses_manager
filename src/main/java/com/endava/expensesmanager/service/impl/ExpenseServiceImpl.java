@@ -61,15 +61,19 @@ public class ExpenseServiceImpl implements ExpenseService {
     }
 
     @Override
-    public void editExpense(Integer expenseId, ExpenseDto expenseDto) {
-        Expense existingExpense = expenseRepository.findById(expenseId)
-                .orElseThrow(() -> new ExpenseNotFoundException(expenseId));
+    public void editExpense(ExpenseDto expenseDto, MultipartFile file) {
+        Expense existingExpense = expenseRepository.findById(expenseDto.getExpenseId())
+                .orElseThrow(() -> new ExpenseNotFoundException(expenseDto.getExpenseId()));
 
         User user = userRepository.findById(expenseDto.getUserId())
                 .orElseThrow(() -> new UserNotFoundException(expenseDto.getUserId()));
 
-        Expense updatedExpense = ExpenseMapper.toUpdatedExpense(existingExpense, expenseDto, user, expenseDto.getCategory(), expenseDto.getCurrency());
+        if (file != null) {
+            Integer documentId = documentService.editDocumentAndGetId(expenseDto.getDocumentId(), file);
+            expenseDto.setDocumentId(documentId);
+        }
 
+        Expense updatedExpense = ExpenseMapper.toUpdatedExpense(existingExpense, expenseDto, user, expenseDto.getCategory(), expenseDto.getCurrency());
         expenseRepository.save(updatedExpense);
     }
 
