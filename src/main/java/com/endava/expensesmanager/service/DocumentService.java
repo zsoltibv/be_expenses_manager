@@ -1,5 +1,6 @@
 package com.endava.expensesmanager.service;
 
+import com.endava.expensesmanager.model.dto.ExpenseDto;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -9,5 +10,7 @@ public interface DocumentService {
 
     void deleteDocumentById(Integer documentId);
 
-    Integer editDocumentAndGetId(Integer documentId, MultipartFile file);
+    Integer editDocumentAndGetId(ExpenseDto expenseDto, MultipartFile file) throws IOException;
+
+    String downloadDocumentById(Integer documentId);
 }
