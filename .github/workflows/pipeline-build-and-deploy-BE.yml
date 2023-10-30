@@ -28,7 +28,7 @@ jobs:
    - name: Install Maven
      uses: stCarolas/setup-maven@v4.5
      with:
-      maven-version: 3.9.5 #incercam cu versiunea 3.9.5 momentan deoarece 4.0.0 nu e disponibila 
+      maven-version: 4.0.0 #incercam cu versiunea 3.9.5 momentan deoarece 4.0.0 nu e disponibila 
        
    - name: Build
      run: mvn clean package -DskipTests=true -Dspring.datasource.username=${{ env.DB_USERNAME }} -Dspring.datasource.password=${{ env.DB_PASSWORD }} -Dspring.datasource.url=${{ env.DB_URL }} -Dazure.document.blob.connectionString=${{ env.REPORTS_ST_SAS_TOKEN_URL }}
