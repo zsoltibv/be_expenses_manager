@@ -38,7 +38,7 @@ public class ExpenseController {
         return new ResponseEntity<>(expenseDto, HttpStatus.OK);
     }
 
-    @GetMapping("byUser/{userId}")
+    @GetMapping("/byUser/{userId}")
     public ResponseEntity<List<ExpenseDto>> getExpensesByUserId(@PathVariable Integer userId, @RequestParam(required = false) LocalDate startDate, @RequestParam(required = false) LocalDate endDate) {
         List<ExpenseDto> expenses = expenseService.getExpensesByUserId(userId, startDate, endDate);
         return new ResponseEntity<>(expenses, HttpStatus.OK);
@@ -49,7 +49,6 @@ public class ExpenseController {
 
         List<ExpenseDto> expenses = expenseService.extractAndSaveExpensesFromPdf(userId, pdfFile);
         return new ResponseEntity<>(expenses, HttpStatus.CREATED);
-
     }
 
     @PostMapping("/seed")
@@ -58,12 +57,10 @@ public class ExpenseController {
         return new ResponseEntity<>("Expenses added successfully!", HttpStatus.CREATED);
     }
 
-
-    @DeleteMapping("{expenseId}")
-    public ResponseEntity<Void> deleteExpenseById(@PathVariable Integer expenseId) {
+    @DeleteMapping("{/expenseId}")
+    public ResponseEntity<String> deleteExpenseById(@PathVariable Integer expenseId) {
         expenseService.deleteExpenseById(expenseId);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>("Expense with id " + expenseId + " deleted successfully!", HttpStatus.OK);
     }
-
 }
 

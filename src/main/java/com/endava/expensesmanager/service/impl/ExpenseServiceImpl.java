@@ -17,6 +17,7 @@ import com.endava.expensesmanager.service.DocumentService;
 import com.endava.expensesmanager.service.ExpenseService;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -145,10 +146,14 @@ public class ExpenseServiceImpl implements ExpenseService {
         if (expenseOptional.isPresent()) {
             expenseRepository.deleteById(expenseId);
 
-        } else
-            throw new ExpenseNotFoundException(expenseId);
-    }
+            expenseOptional.ifPresent(expense -> {
+                expense.getDocument().ifPresent(document -> documentService.deleteDocumentById(document.getDocumentId()));
+            });
+            return;
+        }
 
+        throw new ExpenseNotFoundException(expenseId);
+    }
 
     @Override
     public List<ExpenseDto> extractAndSaveExpensesFromPdf(Integer userId, MultipartFile pdfFile) throws IOException {

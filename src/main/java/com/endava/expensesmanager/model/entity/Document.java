@@ -1,12 +1,12 @@
 package com.endava.expensesmanager.model.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
 @Getter
 @Setter
+@NoArgsConstructor
 @Table(name = "document")
 public class Document {
     @Id
@@ -14,4 +14,7 @@ public class Document {
     private Integer documentId;
     @Column(name = "name")
     private String name;
+    public Document(String name) {
+        this.name = name;
+    }
 }
