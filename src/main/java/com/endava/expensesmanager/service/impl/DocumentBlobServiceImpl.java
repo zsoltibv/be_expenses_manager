@@ -40,14 +40,4 @@ public class DocumentBlobServiceImpl implements DocumentBlobService {
         }
         client.delete();
     }
-
-    @Override
-    public void downloadFile(String filename) {
-        BlobClient client = containerClient().getBlobClient(filename);
-
-        if(!client.exists()){
-            throw new FileNotFoundException(filename);
-        }
-        client.downloadContent();
-    }
 }
