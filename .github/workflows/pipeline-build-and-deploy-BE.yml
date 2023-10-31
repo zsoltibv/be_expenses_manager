@@ -1,9 +1,6 @@
 name: Build and Deploy BE
 
-on:
- push:
-  branches: 
-   EXP-test-pipeline-build-and-deploy-BE
+on: workflow_dispatch 
    
 env:
   RG_NAME: apprenticeship-expenses-manager-rg
