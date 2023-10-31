@@ -53,7 +53,7 @@ public class ExpenseServiceImpl implements ExpenseService {
             throw new UserNotFoundException(expenseDto.getUserId());
         }
 
-        if(file != null) {
+        if (file != null) {
             Integer documentId = documentService.addDocumentAndGetId(file);
             expenseDto.setDocumentId(documentId);
         }
@@ -140,12 +140,28 @@ public class ExpenseServiceImpl implements ExpenseService {
 
         expenseRepository.saveAll(expensesList);
     }
+
+    @Override
+    public void deleteExpenseById(Integer expenseId) {
+        Optional<Expense> expenseOptional = expenseRepository.findById(expenseId);
+        if (expenseOptional.isPresent()) {
+            expenseRepository.deleteById(expenseId);
+
+            expenseOptional.ifPresent(expense -> {
+                expense.getDocument().ifPresent(document -> documentService.deleteDocumentById(document.getDocumentId()));
+            });
+            return;
+        }
+
+        throw new ExpenseNotFoundException(expenseId);
+    }
+
     @Override
     public List<ExpenseDto> extractAndSaveExpensesFromPdf(Integer userId, MultipartFile pdfFile) throws IOException {
 
         List<Expense> expensesList = new ArrayList<>();
 
-        if(!userRepository.existsById(userId)) {
+        if (!userRepository.existsById(userId)) {
             throw new UserNotFoundException(userId);
         }
 
