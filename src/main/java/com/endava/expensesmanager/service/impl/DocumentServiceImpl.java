@@ -50,8 +50,9 @@ public class DocumentServiceImpl implements DocumentService {
         if (document.isPresent()) {
             azureBlobService.deleteFile(document.get().getName());
             documentRepository.deleteById(documentId);
+        } else {
+            throw new DocumentNotFoundException(documentId);
         }
-        throw new DocumentNotFoundException(documentId);
     }
 
     @Override
