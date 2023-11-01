@@ -18,6 +18,7 @@ import com.endava.expensesmanager.service.ExpenseService;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -158,6 +159,8 @@ public class ExpenseServiceImpl implements ExpenseService {
     @Override
     public List<ExpenseDto> extractAndSaveExpensesFromPdf(Integer userId, MultipartFile pdfFile) throws IOException {
 
+        List<Expense> expensesList = new ArrayList<>();
+
         if (!userRepository.existsById(userId)) {
             throw new UserNotFoundException(userId);
         }
@@ -166,9 +169,11 @@ public class ExpenseServiceImpl implements ExpenseService {
 
         Currency currency = currencyRepository.findByCode("RON");
 
-        InputStream pdfInputStream = pdfFile.getInputStream();
-
-        List<Expense> expensesList = new BankStatementParserBRD().parseBankStatement(pdfInputStream);
+        try(InputStream pdfInputStream = pdfFile.getInputStream()) {
+            expensesList = new BankStatementParserBRD().parseBankStatement(pdfInputStream);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
 
         expensesList.stream()
                 .forEach(expense -> {
