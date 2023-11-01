@@ -8,4 +8,6 @@ public interface DocumentService {
     Integer addDocumentAndGetId(MultipartFile file) throws IOException;
 
     void deleteDocumentById(Integer documentId);
+
+    String downloadDocumentById(Integer documentId);
 }

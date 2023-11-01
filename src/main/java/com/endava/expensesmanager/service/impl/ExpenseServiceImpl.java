@@ -143,17 +143,14 @@ public class ExpenseServiceImpl implements ExpenseService {
 
     @Override
     public void deleteExpenseById(Integer expenseId) {
-        Optional<Expense> expenseOptional = expenseRepository.findById(expenseId);
-        if (expenseOptional.isPresent()) {
-            expenseRepository.deleteById(expenseId);
+        Expense expense = expenseRepository.findById(expenseId)
+                .orElseThrow(() -> new ExpenseNotFoundException(expenseId));
 
-            expenseOptional.ifPresent(expense -> {
-                expense.getDocument().ifPresent(document -> documentService.deleteDocumentById(document.getDocumentId()));
-            });
-            return;
-        }
+        expenseRepository.deleteById(expenseId);
 
-        throw new ExpenseNotFoundException(expenseId);
+        expense.getDocument().ifPresent(document -> {
+            documentService.deleteDocumentById(document.getDocumentId());
+        });
     }
 
     @Override
