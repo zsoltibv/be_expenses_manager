@@ -2,16 +2,11 @@ package com.endava.expensesmanager.service.impl;
 
 import com.endava.expensesmanager.model.dto.CurrencyDto;
 import com.endava.expensesmanager.model.dto.ExchangeRatesDto;
-import com.endava.expensesmanager.model.entity.Currency;
-import com.endava.expensesmanager.model.entity.Expense;
-
 import com.endava.expensesmanager.model.dto.ExpenseDto;
 import com.endava.expensesmanager.model.entity.Currency;
 import com.endava.expensesmanager.model.mapper.CurrencyMapper;
-
 import com.endava.expensesmanager.repository.CurrencyRepository;
 import com.endava.expensesmanager.service.CurrencyService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -19,30 +14,29 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 
 @Service
 public class CurrencyServiceImpl implements CurrencyService {
-    private CurrencyRepository currencyRepository;
-    public CurrencyServiceImpl(CurrencyRepository currencyRepository)
-    { this.currencyRepository=currencyRepository;}
-
-@Value("${exchange-rates-api-enable}")
+    private final HashMap<String, BigDecimal> exchangeRates = new HashMap<>();
+    private final CurrencyRepository currencyRepository;
+    @Value("${exchange-rates-api-enable}")
     private boolean flag;
-@Value("${exchange-rates-api-key}")
-private String apiKey;
+    @Value("${exchange-rates-api-key}")
+    private String apiKey;
 
-    private WebClient webClient = WebClient.builder().build();
-
-
-
+    private final WebClient webClient = WebClient.builder().build();
 
 
     private ExchangeRatesDto exchangeRatesDto;
-    private final HashMap<String, BigDecimal> exchangeRates = new HashMap<>();
     private List<String> currencies;
+    public CurrencyServiceImpl(CurrencyRepository currencyRepository) {
+        this.currencyRepository = currencyRepository;
+    }
 
     @Scheduled(fixedRate = 7200000)
     public void getApiRates() {
@@ -88,13 +82,10 @@ private String apiKey;
     }
 
 
-
-    public List<CurrencyDto> getCurrencies()
-    {
-        List<Currency> currencies1= currencyRepository.findAll();
-        List<CurrencyDto> currencies2= new ArrayList<>();
-        for(Currency currency:currencies1)
-        {
+    public List<CurrencyDto> getCurrencies() {
+        List<Currency> currencies1 = currencyRepository.findAll();
+        List<CurrencyDto> currencies2 = new ArrayList<>();
+        for (Currency currency : currencies1) {
 
             currencies2.add(CurrencyMapper.toCurrencyDto(currency));
         }

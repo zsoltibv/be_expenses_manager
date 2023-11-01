@@ -129,7 +129,6 @@ public class ExpenseServiceImpl implements ExpenseService {
     }
 
     public List<List<ExpenseDto>> getExpensesByBeginDateAndEndDateSortedBy(LocalDateTime beginDate, LocalDateTime endDate, Integer userId) {
-        WeekFields weekFields = WeekFields.of(Locale.getDefault());
         List<List<ExpenseDto>> expenseList = new ArrayList<>();
         LocalDate beginDateLocalDate = beginDate.toLocalDate();
         LocalDate endDateLocalDate = endDate.toLocalDate();
