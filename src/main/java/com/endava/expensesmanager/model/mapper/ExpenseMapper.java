@@ -60,6 +60,10 @@ public class ExpenseMapper {
         existingExpense.setUser(user);
         existingExpense.setCategory(category);
         existingExpense.setCurrency(currency);
+        Optional<Document> optionalDocument = existingExpense.getDocument();
+        if (optionalDocument.isPresent()) {
+            existingExpense.setDocument(optionalDocument.get());
+        }
 
         return existingExpense;
     }

@@ -31,9 +31,10 @@ public class ExpenseController {
     }
 
     @PutMapping("/{expenseId}")
-    public ResponseEntity<ExpenseDto> editExpense(@PathVariable Integer expenseId, @RequestBody @Valid ExpenseDto expenseDto) {
+    public ResponseEntity<ExpenseDto> editExpense(@PathVariable Integer expenseId, @RequestPart("expenseDto") @Valid ExpenseDto expenseDto,
+                                                  @RequestPart(value = "file", required = false) MultipartFile file) throws IOException {
 
-        expenseService.editExpense(expenseId, expenseDto);
+        expenseService.editExpense(expenseId, expenseDto, file);
         return new ResponseEntity<>(expenseDto, HttpStatus.OK);
     }
 

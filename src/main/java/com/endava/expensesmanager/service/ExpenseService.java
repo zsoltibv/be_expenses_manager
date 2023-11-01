@@ -12,7 +12,7 @@ import java.util.Map;
 
 public interface ExpenseService {
 
-    void editExpense(Integer expenseId, ExpenseDto expenseDto);
+    void editExpense(Integer expenseId, ExpenseDto expenseDto, MultipartFile file) throws IOException;
 
     List<ExpenseDto> getExpensesByUserId(Integer userId, LocalDate startDate, LocalDate endDate);
 

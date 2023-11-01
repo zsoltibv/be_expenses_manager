@@ -1,9 +1,9 @@
 package com.endava.expensesmanager.service.impl;
 
 import com.endava.expensesmanager.exception.DocumentNotFoundException;
-import com.endava.expensesmanager.exception.FileNotFoundException;
 import com.endava.expensesmanager.exception.FileSizeExceededException;
 import com.endava.expensesmanager.exception.InvalidImageFormatException;
+import com.endava.expensesmanager.model.dto.ExpenseDto;
 import com.endava.expensesmanager.model.entity.Document;
 import com.endava.expensesmanager.repository.DocumentRepository;
 import com.endava.expensesmanager.service.AzureBlobService;
@@ -63,5 +63,22 @@ public class DocumentServiceImpl implements DocumentService {
             return azureBlobService.downloadFile(document.get().getName());
         }
         throw new DocumentNotFoundException(documentId);
+    }
+
+    @Override
+    public Integer editDocumentAndGetId(ExpenseDto expenseDto, MultipartFile file) throws IOException {
+        if (expenseDto.getDocumentId() != null) {
+            Integer documentId = expenseDto.getDocumentId();
+            Optional<Document> existingDocument = documentRepository.findById(documentId);
+
+            if (existingDocument.isPresent()) {
+                Document document = existingDocument.get();
+                azureBlobService.deleteFile(document.getName());
+                return addDocumentAndGetId(file);
+            }
+            throw new DocumentNotFoundException(documentId);
+        }
+
+        return addDocumentAndGetId(file);
     }
 }
