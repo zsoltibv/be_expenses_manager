@@ -12,6 +12,7 @@ import java.util.Map;
 public interface ExpenseService {
 
 
+
     List<List<ExpenseDto>> getExpensesByBeginDateAndEndDateSortedBy(LocalDateTime beginDate, LocalDateTime endDate, Integer userId);
 
 
@@ -20,7 +21,9 @@ public interface ExpenseService {
 
 
 
-    void editExpense(Integer expenseId, ExpenseDto expenseDto);
+
+    void editExpense(Integer expenseId, ExpenseDto expenseDto, MultipartFile file) throws IOException;
+
 
     List<ExpenseDto> getExpensesByUserId(Integer userId, LocalDate startDate, LocalDate endDate);
 
