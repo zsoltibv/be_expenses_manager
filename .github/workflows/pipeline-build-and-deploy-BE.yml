@@ -1,17 +1,19 @@
 name: Build and Deploy BE
 
-on: workflow_dispatch
-
+on: workflow_dispatch 
+   
 env:
   RG_NAME: apprenticeship-expenses-manager-rg
   VM_NAME: exp-vm-backend
   DB_USERNAME: ${{ secrets.TF_ADMIN_USERNAME }}
   DB_PASSWORD: ${{ secrets.TF_ADMIN_PASSWORD }}
   DB_URL: ${{ secrets.TF_MYSQL_JDBC }}
+  REPORTS_ST_SAS_TOKEN_URL: ${{ secrets.REPORTS_ST_SAS_TOKEN_URL }}
   
 jobs:
   Build_and_Deploy:
    runs-on: ubuntu-latest
+   timeout-minutes: 3
    steps:
    - name: Checkout Repository
      uses: actions/checkout@v2
@@ -26,7 +28,7 @@ jobs:
       maven-version: 3.9.5 #incercam cu versiunea 3.9.5 momentan deoarece 4.0.0 nu e disponibila 
        
    - name: Build
-     run: mvn clean package -DskipTests=true -Dspring.datasource.username=$DB_USERNAME -Dspring.datasource.password=$DB_PASSWORD -Dspring.datasource.url=$DB_URL
+     run: mvn clean package -DskipTests=true -Dspring.datasource.username=${{ env.DB_USERNAME }} -Dspring.datasource.password=${{ env.DB_PASSWORD }} -Dspring.datasource.url=${{ env.DB_URL }} -Dazure.document.blob.connectionString=${{ env.REPORTS_ST_SAS_TOKEN_URL }}
 
    - name: 'Create a temporary key file'
      run: |
@@ -59,8 +61,9 @@ jobs:
      run: |
        scp -i temp_key.pem -r ./target/* azureuser@${{ steps.get_ip.outputs.VM_IP }}:be_expenses_manager
        ssh -i temp_key.pem -o StrictHostKeyChecking=no azureuser@${{ steps.get_ip.outputs.VM_IP }} 'bash -s' << 'ENDSSH'
+       if [ -n $(pgrep -f 'java -jar') ]; then kill $(pgrep -f 'java -jar'); fi 
        cd be_expenses_manager
-       java -jar expenses-manager-0.0.1-SNAPSHOT.jar
+       if nohup java -jar expenses-manager-0.0.1-SNAPSHOT.jar > nohup.out 2>&1 & then echo "Java start successfully." && exit 0; else echo "Error at start Java." && exit 1; fi
        ENDSSH
    
    - name: Clean up temporary key file
