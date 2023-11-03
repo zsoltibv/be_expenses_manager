@@ -1,12 +1,20 @@
 package com.endava.expensesmanager.controller;
 
 import com.endava.expensesmanager.model.dto.ExpenseDto;
+
+import com.endava.expensesmanager.model.entity.Category;
+
 import com.endava.expensesmanager.service.ExpenseService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+
+import java.time.LocalDate;
+import java.util.List;
+
 import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.time.LocalDate;
@@ -50,6 +58,7 @@ public class ExpenseController {
         List<ExpenseDto> expenses = expenseService.extractAndSaveExpensesFromPdf(userId, pdfFile);
         return new ResponseEntity<>(expenses, HttpStatus.CREATED);
     }
+
 
     @PostMapping("/seed")
     public ResponseEntity<String> seedExpenses(@RequestParam(required = false) Integer nrOfExpenses, @RequestParam(required = false) Integer nrOfDays) {

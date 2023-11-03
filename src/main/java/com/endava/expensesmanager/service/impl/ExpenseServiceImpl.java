@@ -14,8 +14,16 @@ import com.endava.expensesmanager.repository.CurrencyRepository;
 import com.endava.expensesmanager.repository.ExpenseRepository;
 import com.endava.expensesmanager.repository.UserRepository;
 import com.endava.expensesmanager.service.DocumentService;
+
 import com.endava.expensesmanager.service.ExpenseService;
 import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.temporal.TemporalAdjusters;
+import java.time.temporal.WeekFields;
+import java.util.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.FileNotFoundException;
@@ -28,6 +36,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -103,6 +112,7 @@ public class ExpenseServiceImpl implements ExpenseService {
 
     }
 
+
     public List<ExpenseDto> getExpensesByBeginDateAndEndDate(LocalDateTime beginDate, LocalDateTime endDate, Integer userId) {
         List<Expense> expenses = expenseRepository.findExpensesBetweenDatesForUser(beginDate, endDate, userId);
         List<ExpenseDto> expenseDto = new ArrayList<>();
@@ -110,6 +120,7 @@ public class ExpenseServiceImpl implements ExpenseService {
             expenseDto.add(ExpenseMapper.toDto(expense));
         }
         return expenseDto;
+
     }
 
 
@@ -119,6 +130,40 @@ public class ExpenseServiceImpl implements ExpenseService {
                         expense -> categoryRepository.findById(expense.getCategory().getCategoryId()).get().getDescription(),
                         Collectors.mapping(ExpenseDto::getAmount, Collectors.reducing(BigDecimal.ZERO, BigDecimal::add))
                 ));
+    }
+
+    public List<List<ExpenseDto>> getExpensesByBeginDateAndEndDateSortedBy(LocalDateTime beginDate, LocalDateTime endDate, Integer userId) {
+        List<List<ExpenseDto>> expenseList = new ArrayList<>();
+        LocalDate beginDateLocalDate = beginDate.toLocalDate();
+        LocalDate endDateLocalDate = endDate.toLocalDate();
+        if (beginDateLocalDate.compareTo(endDateLocalDate) == 0) {
+            while (beginDate.isBefore(endDate)) {
+                expenseList.add(this.getExpensesByBeginDateAndEndDate(beginDate, beginDate.plusHours(1).minusSeconds(1), userId));
+                beginDate = beginDate.plusHours(1);
+            }
+
+        } else if (beginDate.getYear() == endDate.getYear() && beginDate.getMonth() == endDate.getMonth()) {
+            LocalDate increment = LocalDate.of(beginDate.getYear(), beginDate.getMonth(), beginDate.getDayOfMonth());
+            while (increment.compareTo(endDate.toLocalDate()) <= 0) {
+                expenseList.add(this.getExpensesByBeginDateAndEndDate(increment.atStartOfDay(), increment.atStartOfDay().plusHours(24).minusSeconds(1), userId));
+                increment = increment.plusDays(1);
+            }
+
+        } else {
+            LocalDate increment = LocalDate.of(beginDate.getYear(), beginDate.getMonth(), beginDate.getDayOfMonth());
+            while (endDate.toLocalDate().compareTo(increment.with(TemporalAdjusters.firstDayOfMonth())) >= 0) {
+                LocalDate beginDateMonth = increment.with(TemporalAdjusters.firstDayOfMonth());
+                LocalDate endDateMonth = increment.with(TemporalAdjusters.lastDayOfMonth());
+                if (beginDateMonth.isBefore(beginDate.toLocalDate()))
+                    beginDateMonth = LocalDate.of(beginDate.getYear(), beginDate.getMonth(), beginDate.getDayOfMonth());
+                if (endDateMonth.isAfter(endDate.toLocalDate()))
+                    endDateMonth = LocalDate.of(endDate.getYear(), endDate.getMonth(), endDate.getDayOfMonth());
+                expenseList.add(this.getExpensesByBeginDateAndEndDate(beginDateMonth.atStartOfDay(), endDateMonth.atStartOfDay().plusHours(24).minusSeconds(1), userId));
+                increment = increment.plusMonths(1);
+            }
+        }
+        return expenseList;
+
     }
 
     @Override

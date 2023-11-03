@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -36,6 +37,22 @@ public class TotalServiceImpl implements TotalService {
 
 
         return expenseService.sortExpenses(expenses);
+    }
+
+    public List<Map<String, BigDecimal>> barchartData(int userId, LocalDateTime startDate, LocalDateTime endDate, String code) {
+        List<List<ExpenseDto>> barChartList = expenseService.getExpensesByBeginDateAndEndDateSortedBy(startDate, endDate, userId);
+        List<List<ExpenseDto>> currencyBarChartList = new ArrayList<>();
+        List<Map<String, BigDecimal>> barchartListMap = new ArrayList<>();
+        for (List<ExpenseDto> listItem : barChartList) {
+            List<ExpenseDto> newListItem = currencyService.changeCurrencyTo(code, listItem);
+            currencyBarChartList.add(newListItem);
+        }
+        for (List<ExpenseDto> listItem : currencyBarChartList) {
+            Map<String, BigDecimal> mapItem = expenseService.sortExpenses(listItem);
+            barchartListMap.add(mapItem);
+
+        }
+        return barchartListMap;
     }
 
 }

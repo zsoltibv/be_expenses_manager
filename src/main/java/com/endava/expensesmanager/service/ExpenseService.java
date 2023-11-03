@@ -12,6 +12,10 @@ import java.util.Map;
 
 public interface ExpenseService {
 
+    List<List<ExpenseDto>> getExpensesByBeginDateAndEndDateSortedBy(LocalDateTime beginDate, LocalDateTime endDate, Integer userId);
+
+    void addExpense(ExpenseDto expenseDto, MultipartFile file) throws IOException;
+
     void editExpense(Integer expenseId, ExpenseDto expenseDto, MultipartFile file) throws IOException;
 
     List<ExpenseDto> getExpensesByUserId(Integer userId, LocalDate startDate, LocalDate endDate);
@@ -20,11 +24,11 @@ public interface ExpenseService {
 
     void seedExpenses(Integer nrOfExpenses, Integer nrOfDays);
 
-    void addExpense(ExpenseDto expenseDto, MultipartFile file) throws IOException;
 
     void deleteExpenseById(Integer expenseId);
 
     Map<String, BigDecimal> sortExpenses(List<ExpenseDto> expenses);
 
     List<ExpenseDto> extractAndSaveExpensesFromPdf(Integer userId, MultipartFile pdfFile) throws IOException;
+
 }
