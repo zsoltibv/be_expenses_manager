@@ -68,8 +68,8 @@ jobs:
        if [ -n $(pgrep -f 'java -jar') ]; then kill $(pgrep -f 'java -jar'); fi 
        cd be_expenses_manager
        java -jar expenses-manager-0.0.1-SNAPSHOT.jar
-       # sleep .30
-       # ps | grep "java"
+       sleep .30
+       ps | grep "java"
        ENDSSH
    
    - name: Clean up temporary key file
