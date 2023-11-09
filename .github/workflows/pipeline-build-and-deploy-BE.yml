@@ -67,7 +67,7 @@ jobs:
        ssh -i temp_key.pem -o StrictHostKeyChecking=no azureuser@${{ steps.get_ip.outputs.VM_IP }} 'bash -s' << 'ENDSSH'
        if [ -n $(pgrep -f 'java -jar') ]; then kill $(pgrep -f 'java -jar'); fi 
        cd be_expenses_manager
-       nohup java  '-Dspring.datasource.username="${{ env.DB_USERNAME }}"' '-Dspring.datasource.password="${{ env.DB_PASSWORD }}"' '-Dspring.datasource.url="jdbc:mysql://exp-server-mysql.mysql.database.azure.com:3306/database_em?useSSL=true&requireSSL=false"' '-Dazure.document.blob.connectionString="${{ env.REPORTS_ST_SAS_TOKEN_URL }}"' -jar expenses-manager-0.0.1-SNAPSHOT.jar > nohup.out  2>&1 &
+       nohup java  '-Dspring.datasource.username="${{ env.DB_USERNAME }}"' '-Dspring.datasource.password="${{ env.DB_PASSWORD }}"' '-Dspring.datasource.url=jdbc:mysql://exp-server-mysql.mysql.database.azure.com:3306/database_em?useSSL=true&requireSSL=false' '-Dazure.document.blob.connectionString="${{ env.REPORTS_ST_SAS_TOKEN_URL }}"' -jar expenses-manager-0.0.1-SNAPSHOT.jar > nohup.out  2>&1 &
        sleep 30
         if [ -n $(pgrep -f 'java -jar') ]; then echo "Java start successfully"; else echo "Java fail to start" && exit 1; fi
        ENDSSH
