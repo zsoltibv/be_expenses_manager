@@ -32,7 +32,7 @@ jobs:
       maven-version: 3.9.5 #incercam cu versiunea 3.9.5 momentan deoarece 4.0.0 nu e disponibila 
        
    - name: Build
-     run: mvn clean package -DskipTests=true -Dspring.datasource.username="${{ env.DB_USERNAME }}" -Dspring.datasource.password="${{ env.DB_PASSWORD }}" -Dspring.datasource.url="${{ env.DB_URL }}" -Dazure.document.blob.connectionString="${{ env.REPORTS_ST_SAS_TOKEN_URL }}"
+     run: mvn clean package '-DskipTests=true' 
 
    - name: 'Create a temporary key file'
      run: |
@@ -67,9 +67,9 @@ jobs:
        ssh -i temp_key.pem -o StrictHostKeyChecking=no azureuser@${{ steps.get_ip.outputs.VM_IP }} 'bash -s' << 'ENDSSH'
        if [ -n $(pgrep -f 'java -jar') ]; then kill $(pgrep -f 'java -jar'); fi 
        cd be_expenses_manager
-       nohup java -jar expenses-manager-0.0.1-SNAPSHOT.jar > /dev/null 2>&1 &
+       nohup java -jar expenses-manager-0.0.1-SNAPSHOT.jar '-Dspring.datasource.username="${{ env.DB_USERNAME }}"' '-Dspring.datasource.password="${{ env.DB_PASSWORD }}"' '-Dspring.datasource.url="${{ env.DB_URL }}"' '-Dazure.document.blob.connectionString="${{ env.REPORTS_ST_SAS_TOKEN_URL }}"' > /dev/null 2>&1 &
        sleep 30
-       ps | grep "java"
+        if [ -n $(pgrep -f 'java -jar') ]; then echo "Java start successfully" ; fi
        ENDSSH
    
    - name: Clean up temporary key file
