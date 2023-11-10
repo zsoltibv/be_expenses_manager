@@ -1,5 +1,5 @@
-CREATE DATABASE  IF NOT EXISTS `mydb` ;
-USE `mydb`;
+CREATE DATABASE  IF NOT EXISTS `database_em` ;
+USE `database_em`;
 
 --
 -- Table structure for table `category`
@@ -47,7 +47,7 @@ CREATE TABLE IF NOT EXISTS `document` (
     `document_id` INT NOT NULL AUTO_INCREMENT,
     `name` VARCHAR(255) NOT NULL,
     PRIMARY KEY (`document_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 --
 -- Table structure for table `expenses`
