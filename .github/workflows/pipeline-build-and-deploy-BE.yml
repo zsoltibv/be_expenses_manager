@@ -69,7 +69,7 @@ jobs:
        cd be_expenses_manager
        nohup java -Dspring.datasource.username="${{ env.DB_USERNAME }}" -Dspring.datasource.password="${{ env.DB_PASSWORD }}" -Dspring.datasource.url="${{ env.DB_URL }}" -Dazure.document.blob.connectionString="${{ env.REPORTS_ST_SAS_TOKEN_URL }}" -jar expenses-manager-0.0.1-SNAPSHOT.jar > nohup.out  2>&1 &
        sleep 30
-       if [ -n $(pgrep -f 'java')]; then echo "Java faild to start" && exit 1; else echo "Java start successfully"; fi
+       if [ -n $(pgrep -f 'java') ]; then echo "Java faild to start" && exit 1; else echo "Java start successfully"; fi
        ENDSSH
    
    - name: Clean up temporary key file
