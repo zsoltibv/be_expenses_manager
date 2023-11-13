@@ -19,6 +19,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.TemporalAdjusters;
+
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.FileNotFoundException;
@@ -67,23 +68,25 @@ public class ExpenseServiceImpl implements ExpenseService {
         Expense existingExpense = expenseRepository.findById(expenseId)
                 .orElseThrow(() -> new ExpenseNotFoundException(expenseId));
 
-        Document existingDocument = null;
-        if (existingExpense.getDocument().isPresent()) {
-            existingDocument = existingExpense.getDocument().get();
-        }
+        Document existingDocument = existingExpense.getDocument().orElse(null);
 
         User user = userRepository.findById(expenseDto.getUserId())
                 .orElseThrow(() -> new UserNotFoundException(expenseDto.getUserId()));
 
+        Integer documentId = null;
         if (file != null) {
-            Integer documentId = documentService.editDocumentAndGetId(expenseDto, file);
+            documentId = documentService.editDocumentAndGetId(expenseDto, file);
             expenseDto.setDocumentId(documentId);
         }
 
-        Expense updatedExpense = ExpenseMapper.toUpdatedExpense(existingExpense, expenseDto, user, expenseDto.getCategory(), expenseDto.getCurrency(), documentService.getDocumentById(expenseDto.getDocumentId()));
-        expenseRepository.save(updatedExpense);
+        Optional<Document> document = documentId != null
+                ? Optional.ofNullable(documentService.getDocumentById(documentId))
+                : Optional.empty();
 
-        if(existingDocument != null) {
+        Expense updatedExpense = ExpenseMapper.toUpdatedExpense(existingExpense, expenseDto, user, document.orElse(null));
+
+        expenseRepository.save(updatedExpense);
+        if (existingDocument != null) {
             documentService.deleteDocument(existingDocument);
         }
     }
@@ -215,7 +218,7 @@ public class ExpenseServiceImpl implements ExpenseService {
 
         Currency currency = currencyRepository.findByCode("RON");
 
-        try(InputStream pdfInputStream = pdfFile.getInputStream()) {
+        try (InputStream pdfInputStream = pdfFile.getInputStream()) {
             expensesList = new BankStatementParserBRD().parseBankStatement(pdfInputStream);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
