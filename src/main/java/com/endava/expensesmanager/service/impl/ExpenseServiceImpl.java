@@ -4,10 +4,7 @@ import com.endava.expensesmanager.exception.ExpenseNotFoundException;
 import com.endava.expensesmanager.exception.UserNotFoundException;
 import com.endava.expensesmanager.generator.ExpenseGenerator;
 import com.endava.expensesmanager.model.dto.ExpenseDto;
-import com.endava.expensesmanager.model.entity.Category;
-import com.endava.expensesmanager.model.entity.Currency;
-import com.endava.expensesmanager.model.entity.Expense;
-import com.endava.expensesmanager.model.entity.User;
+import com.endava.expensesmanager.model.entity.*;
 import com.endava.expensesmanager.model.mapper.ExpenseMapper;
 import com.endava.expensesmanager.repository.CategoryRepository;
 import com.endava.expensesmanager.repository.CurrencyRepository;
@@ -70,6 +67,11 @@ public class ExpenseServiceImpl implements ExpenseService {
         Expense existingExpense = expenseRepository.findById(expenseId)
                 .orElseThrow(() -> new ExpenseNotFoundException(expenseId));
 
+        Document existingDocument = null;
+        if (existingExpense.getDocument().isPresent()) {
+            existingDocument = existingExpense.getDocument().get();
+        }
+
         User user = userRepository.findById(expenseDto.getUserId())
                 .orElseThrow(() -> new UserNotFoundException(expenseDto.getUserId()));
 
@@ -78,8 +80,12 @@ public class ExpenseServiceImpl implements ExpenseService {
             expenseDto.setDocumentId(documentId);
         }
 
-        Expense updatedExpense = ExpenseMapper.toUpdatedExpense(existingExpense, expenseDto, user, expenseDto.getCategory(), expenseDto.getCurrency());
+        Expense updatedExpense = ExpenseMapper.toUpdatedExpense(existingExpense, expenseDto, user, expenseDto.getCategory(), expenseDto.getCurrency(), documentService.getDocumentById(expenseDto.getDocumentId()));
         expenseRepository.save(updatedExpense);
+
+        if(existingDocument != null) {
+            documentService.deleteDocument(existingDocument);
+        }
     }
 
     @Override
@@ -192,9 +198,8 @@ public class ExpenseServiceImpl implements ExpenseService {
 
         expenseRepository.deleteById(expenseId);
 
-        expense.getDocument().ifPresent(document -> {
-            documentService.deleteDocumentById(document.getDocumentId());
-        });
+        Optional<Document> optionalDocument = expense.getDocument();
+        optionalDocument.ifPresent(documentService::deleteDocument);
     }
 
     @Override
