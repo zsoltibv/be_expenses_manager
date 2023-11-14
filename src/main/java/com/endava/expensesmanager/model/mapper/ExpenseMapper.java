@@ -51,19 +51,16 @@ public class ExpenseMapper {
         return expenseDto;
     }
 
-    public static Expense toUpdatedExpense(Expense existingExpense, ExpenseDto expenseDto, User user, Category category, Currency currency) {
+    public static Expense toUpdatedExpense(Expense existingExpense, ExpenseDto expenseDto, User user, Document document) {
 
         existingExpense.setDescription(expenseDto.getDescription());
         existingExpense.setAmount(expenseDto.getAmount());
         existingExpense.setExpenseDate(expenseDto.getExpenseDate());
 
         existingExpense.setUser(user);
-        existingExpense.setCategory(category);
-        existingExpense.setCurrency(currency);
-        Optional<Document> optionalDocument = existingExpense.getDocument();
-        if (optionalDocument.isPresent()) {
-            existingExpense.setDocument(optionalDocument.get());
-        }
+        existingExpense.setCategory(expenseDto.getCategory());
+        existingExpense.setCurrency(expenseDto.getCurrency());
+        existingExpense.setDocument(document);
 
         return existingExpense;
     }

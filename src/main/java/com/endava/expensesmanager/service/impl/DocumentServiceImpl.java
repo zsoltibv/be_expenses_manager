@@ -8,6 +8,7 @@ import com.endava.expensesmanager.model.entity.Document;
 import com.endava.expensesmanager.repository.DocumentRepository;
 import com.endava.expensesmanager.service.AzureBlobService;
 import com.endava.expensesmanager.service.DocumentService;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -44,14 +45,12 @@ public class DocumentServiceImpl implements DocumentService {
     }
 
     @Override
-    public void deleteDocumentById(Integer documentId) {
-        Optional<Document> document = documentRepository.findById(documentId);
-
-        if (document.isPresent()) {
-            azureBlobService.deleteFile(document.get().getName());
-            documentRepository.deleteById(documentId);
+    public void deleteDocument(Document document) {
+        if (document != null) {
+            azureBlobService.deleteFile(document.getName());
+            documentRepository.delete(document);
         } else {
-            throw new DocumentNotFoundException(documentId);
+            throw new DocumentNotFoundException(document.getDocumentId());
         }
     }
 
@@ -66,14 +65,17 @@ public class DocumentServiceImpl implements DocumentService {
     }
 
     @Override
+    public Document getDocumentById(Integer documentId) {
+        return documentRepository.getReferenceById(documentId);
+    }
+
+    @Override
     public Integer editDocumentAndGetId(ExpenseDto expenseDto, MultipartFile file) throws IOException {
         if (expenseDto.getDocumentId() != null) {
             Integer documentId = expenseDto.getDocumentId();
             Optional<Document> existingDocument = documentRepository.findById(documentId);
 
             if (existingDocument.isPresent()) {
-                Document document = existingDocument.get();
-                azureBlobService.deleteFile(document.getName());
                 return addDocumentAndGetId(file);
             }
             throw new DocumentNotFoundException(documentId);

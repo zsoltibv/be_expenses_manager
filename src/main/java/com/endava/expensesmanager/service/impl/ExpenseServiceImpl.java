@@ -4,10 +4,7 @@ import com.endava.expensesmanager.exception.ExpenseNotFoundException;
 import com.endava.expensesmanager.exception.UserNotFoundException;
 import com.endava.expensesmanager.generator.ExpenseGenerator;
 import com.endava.expensesmanager.model.dto.ExpenseDto;
-import com.endava.expensesmanager.model.entity.Category;
-import com.endava.expensesmanager.model.entity.Currency;
-import com.endava.expensesmanager.model.entity.Expense;
-import com.endava.expensesmanager.model.entity.User;
+import com.endava.expensesmanager.model.entity.*;
 import com.endava.expensesmanager.model.mapper.ExpenseMapper;
 import com.endava.expensesmanager.repository.CategoryRepository;
 import com.endava.expensesmanager.repository.CurrencyRepository;
@@ -22,6 +19,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.TemporalAdjusters;
+
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.FileNotFoundException;
@@ -70,16 +68,27 @@ public class ExpenseServiceImpl implements ExpenseService {
         Expense existingExpense = expenseRepository.findById(expenseId)
                 .orElseThrow(() -> new ExpenseNotFoundException(expenseId));
 
+        Document existingDocument = existingExpense.getDocument().orElse(null);
+
         User user = userRepository.findById(expenseDto.getUserId())
                 .orElseThrow(() -> new UserNotFoundException(expenseDto.getUserId()));
 
+        Integer documentId = null;
         if (file != null) {
-            Integer documentId = documentService.editDocumentAndGetId(expenseDto, file);
+            documentId = documentService.editDocumentAndGetId(expenseDto, file);
             expenseDto.setDocumentId(documentId);
         }
 
-        Expense updatedExpense = ExpenseMapper.toUpdatedExpense(existingExpense, expenseDto, user, expenseDto.getCategory(), expenseDto.getCurrency());
+        Optional<Document> document = documentId != null
+                ? Optional.ofNullable(documentService.getDocumentById(documentId))
+                : Optional.empty();
+
+        Expense updatedExpense = ExpenseMapper.toUpdatedExpense(existingExpense, expenseDto, user, document.orElse(null));
+
         expenseRepository.save(updatedExpense);
+        if (existingDocument != null) {
+            documentService.deleteDocument(existingDocument);
+        }
     }
 
     @Override
@@ -192,9 +201,8 @@ public class ExpenseServiceImpl implements ExpenseService {
 
         expenseRepository.deleteById(expenseId);
 
-        expense.getDocument().ifPresent(document -> {
-            documentService.deleteDocumentById(document.getDocumentId());
-        });
+        Optional<Document> optionalDocument = expense.getDocument();
+        optionalDocument.ifPresent(documentService::deleteDocument);
     }
 
     @Override
@@ -210,7 +218,7 @@ public class ExpenseServiceImpl implements ExpenseService {
 
         Currency currency = currencyRepository.findByCode("RON");
 
-        try(InputStream pdfInputStream = pdfFile.getInputStream()) {
+        try (InputStream pdfInputStream = pdfFile.getInputStream()) {
             expensesList = new BankStatementParserBRD().parseBankStatement(pdfInputStream);
         } catch (FileNotFoundException e) {
             e.printStackTrace();

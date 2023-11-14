@@ -36,5 +36,4 @@ public class Expense {
     public Optional<Document> getDocument() {
         return Optional.ofNullable(document);
     }
-
 }

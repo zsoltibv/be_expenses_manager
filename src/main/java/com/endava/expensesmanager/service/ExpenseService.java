@@ -23,7 +23,6 @@ public interface ExpenseService {
 
     void seedExpenses(Integer nrOfExpenses, Integer nrOfDays);
 
-
     void deleteExpenseById(Integer expenseId);
 
     Map<String, BigDecimal> sortExpenses(List<ExpenseDto> expenses);
