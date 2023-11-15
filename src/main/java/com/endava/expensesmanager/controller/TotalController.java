@@ -32,9 +32,6 @@ public class TotalController {
 
     @GetMapping("/category")
     public ResponseEntity<Map<String, BigDecimal>> getTotalSumCategory(@RequestParam int userId, @RequestParam LocalDateTime startDate, @RequestParam LocalDateTime endDate, @RequestParam String code) {
-        if (endDate.isAfter(LocalDateTime.now())) {
-            throw new IllegalArgumentException("Date invalid");
-        }
         return new ResponseEntity<>(totalService.totalExpenseCategory(userId, startDate, endDate, code), HttpStatus.OK);
     }
 
